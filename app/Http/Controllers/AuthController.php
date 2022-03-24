@@ -72,9 +72,13 @@
 
         public function welcome()
         {
-            $this->logger->info(\Auth::user());
+            // $this->logger->info(\Auth::user());
 
             return view('hrms.auth.welcome');
+        }
+
+        public function welcum(){
+            return view('hrms.auth.welcum');
         }
 
         public function notFound()

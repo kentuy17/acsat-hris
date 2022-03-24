@@ -4,6 +4,7 @@ namespace App;
 use App\Models\Employee;
 use App\Models\Project;
 use App\Models\UserRole;
+use App\Models\Role;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
 

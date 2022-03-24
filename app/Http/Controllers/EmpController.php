@@ -24,11 +24,15 @@ use Monolog\Handler\FirePHPHandler;
 class EmpController extends Controller
 {
 
-    public function addEmployee()
-    {
-        $roles = Role::get();
+    public function addEmployee(){
+      $roles = Role::get();
 
-        return view('hrms.employee.add', compact('roles'));
+      return view('hrms.employee.add', compact('roles'));
+    }
+
+    public function addEmployeeTmp(){
+      $roles = Role::get();
+      return view('pages.employee.add', compact('roles'));
     }
 
     public function processEmployee(Request $request)
