@@ -349,6 +349,7 @@ Route::group(['middleware' => ['auth']], function ()
 
     Route::get('welcum', 'AuthController@welcum');
     Route::get('add-employee-tmp', 'EmpController@addEmployeeTmp');
-    // Route::get('add-employee', ['as' => 'add-employee', 'uses' => 'EmpController@addEmployee']);
+    Route::post('add-employee-tmp', ['as' => 'add-employee-tmp', 'uses' => 'EmpController@processEmployeeTmp']);
+    Route::get('list-employee-tmp', ['as' => 'list-employee-tmp', 'uses' => 'EmpController@showEmployeeTmp']);
 
 });

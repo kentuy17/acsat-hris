@@ -22,6 +22,9 @@
       display: grid;
     }
   </style>
+  <!-- <link rel="stylesheet" href="{{ URL::asset('assets/bower/plugins/bs-stepper/css/bs-stepper.min.css') }}"> -->
+  <!-- <link rel="stylesheet" href="{{ URL::asset('assets/bower/css/bootstrap.min.css') }}"> -->
+  @stack('styles')
 </head>
 <!--
 `body` tag options:
@@ -135,5 +138,10 @@
 <script src="{{ URL::asset('assets/bower/js/demo.js') }}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{ URL::asset('assets/bower/js/pages/dashboard3.js') }}"></script>
+
+@stack('scripts')
+
+@yield('jsfunction')
+
 </body>
 </html>

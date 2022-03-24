@@ -26,13 +26,54 @@ class EmpController extends Controller
 
     public function addEmployee(){
       $roles = Role::get();
-
-      return view('hrms.employee.add', compact('roles'));
+      return view('pages.employee.add', compact('roles'));
     }
 
     public function addEmployeeTmp(){
       $roles = Role::get();
-      return view('pages.employee.add', compact('roles'));
+      return view('hrms.employee.add', compact('roles'));
+    }
+
+    public function processEmployeeTmp(Request $request){
+      $filename = public_path('assets/bower/img/default-v2.jpg');
+        if ($request->file('photo')) {
+            $file = $request->file('photo');
+            $filename = str_random(12);
+            $fileExt = $file->getClientOriginalExtension();
+            $allowedExtension = ['jpg', 'jpeg', 'png'];
+            $destinationPath = public_path('photos');
+            if (!in_array($fileExt, $allowedExtension)) {
+                return redirect()->back()->with('message', 'File not allowed');
+            }
+            $filename = $filename . '.' . $fileExt;
+            $file->move($destinationPath, $filename);
+        }
+
+        $user           = new User;
+        $user->name     = $request->emp_name;
+        $user->email    = str_replace(' ', '_', $request->emp_name) . '@acsat.ph';
+        $user->password = bcrypt('123456');
+        $user->save();
+
+        $emp              = new Employee;
+        $emp->photo       = $filename;
+        $emp->name        = $request->emp_name;
+        $emp->code        = $request->emp_code;
+        $emp->status      = $request->emp_status;
+        $emp->gender      = $request->gender;
+        $emp->department  = $request->department;
+        $emp->salary      = $request->salary;
+        $emp->user_id     = $user->id;
+        $emp->save();
+
+        $userRole          = new UserRole();
+        $userRole->role_id = $request->role;
+        $userRole->user_id = $user->id;
+        $userRole->save();
+        //$emp->userrole()->create(['role_id' => $request->role]);
+
+        // return json_encode(['title' => 'Success', 'message' => 'Employee added successfully', 'class' => 'modal-header-success']);
+        return view('hrms.employee.show_emp', compact('roles'));
     }
 
     public function processEmployee(Request $request)
@@ -54,7 +95,7 @@ class EmpController extends Controller
 
         $user           = new User;
         $user->name     = $request->emp_name;
-        $user->email    = str_replace(' ', '_', $request->emp_name) . '@sipi-ip.sg';
+        $user->email    = str_replace(' ', '_', $request->emp_name) . '@acsat.ph';
         $user->password = bcrypt('123456');
         $user->save();
 
@@ -102,6 +143,19 @@ class EmpController extends Controller
 
     }
 
+    public function showEmployeeTmp()
+    {
+        $logger = new Logger('my_logger');
+        // Now add some handlers
+        $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Logger::DEBUG));
+        $logger->pushHandler(new FirePHPHandler());
+
+        $employees  = User::with('employee', 'role.role')->paginate(15);
+        $logger->info(json_encode($employees));
+
+        return view('pages.employee.list', compact('employees'));
+    }
+
     public function showEmployee()
     {
         $logger = new Logger('my_logger');
@@ -114,7 +168,8 @@ class EmpController extends Controller
         $logger->info(json_encode($emps));
         $column = '';
         $string = '';
-        return view('hrms.employee.show_emp', compact('emps', 'column', 'string'));
+
+        return view('hrms.employee.show_emp', compact('emps','string','column'));
     }
 
     public function showEdit($id)
