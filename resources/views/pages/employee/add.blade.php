@@ -52,7 +52,7 @@
                     </div>
                     <div class="form-group">
                       <label for="emp_status">Employment Status</label>
-                      <select name="emp_status" id="role" class="select2-single form-control">
+                      <select name="emp_status" id="emp_status" class="select2-single form-control">
                         <option value="">Select</option>
                         <option value="1">Active</option>
                         <option value="0">Inactive</option>

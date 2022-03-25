@@ -1,4 +1,4 @@
-<nav class="mt-2">
+  <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
       <!-- Add icons to the links using the .nav-icon class
          with font-awesome or any other icon font library -->
@@ -11,14 +11,14 @@
         </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="{{route('add-employee')}}" class="nav-link">
-              <i class="fa fa-caret-right nav-icon"></i>
+            <a href="{{route('add-employee')}}" id="add-employee" class="nav-link">
+              <i class="fa fa-plus nav-icon" style="margin-left:10px"></i>
               <p>Add Employee</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{route('list-employee')}}" class="nav-link">
-              <i class="fa fa-caret-right nav-icon"></i>
+            <a href="{{route('list-employee')}}" id="list-employee" class="nav-link">
+              <i class="fa fa-list nav-icon" style="margin-left:10px"></i>
               <p>Employee List</p>
             </a>
           </li>
@@ -34,14 +34,14 @@
         </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="{{route('add-role')}}" class="nav-link">
-              <i class="fa fa-caret-right nav-icon"></i>
+            <a href="{{route('add-role')}}" id="add-role" class="nav-link">
+              <i class="fa fa-plus nav-icon" style="margin-left:10px"></i>
               <p>Add Role</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{route('role-list')}}" class="nav-link">
-              <i class="fa fa-caret-right nav-icon"></i>
+            <a href="{{route('role-list')}}" id="role-list" class="nav-link">
+              <i class="fa fa-list nav-icon" style="margin-left:10px"></i>
               <p>List Roles</p>
             </a>
           </li>
@@ -57,28 +57,28 @@
         </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="{{route('apply-leave')}}" class="nav-link">
-              <i class="fa fa-caret-right nav-icon"></i>
+            <a href="{{route('apply-leave')}}" id="apply-leave" class="nav-link">
+              <i class="fa fa-calendar nav-icon" style="margin-left:10px"></i>
               <p>Apply Leave</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{route('my-leave-list')}}" class="nav-link">
-              <i class="fa fa-caret-right nav-icon"></i>
+            <a href="{{route('my-leave-list')}}" id="my-leave-list" class="nav-link">
+              <i class="fa fa-list nav-icon" style="margin-left:10px"></i>
               <p>My Leave List</p>
             </a>
           </li>
           <!-- For HR -->
           @if(\Auth::user()->isHR())
             <li class="nav-item">
-              <a href="{{route('add-leave-type')}}" class="nav-link">
-              <i class="fa fa-caret-right nav-icon"></i>
+              <a href="{{route('add-leave-type')}}" id="add-leave-type" class="nav-link">
+              <i class="fa fa-plus nav-icon" style="margin-left:10px"></i>
                 <p>Add Leave Type</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{{route('leave-type-listing')}}" class="nav-link">
-              <i class="fa fa-caret-right nav-icon"></i>
+              <i class="fa fa-calendar-alt nav-icon" style="margin-left:10px"></i>
                 <p>Leave Types</p>
               </a>
             </li>
@@ -87,7 +87,7 @@
           @if(Auth::user()->isHR() || Auth::user()->isCoordinator())
             <li class="nav-item">
               <a href="{{route('total-leave-list')}}" class="nav-link">
-              <i class="fa fa-caret-right nav-icon"></i>
+              <i class="fa fa-list-alt nav-icon" style="margin-left:10px"></i>
                 <p>Total Leave Lists</p>
               </a>
             </li>
@@ -107,7 +107,7 @@
           <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="{{route('attendance-upload')}}" class="nav-link">
-                <i class="fa fa-caret-right nav-icon"></i>
+                <i class="fa fa-upload nav-icon" style="margin-left:10px"></i>
                 <p>Upload Excel</p>
               </a>
             </li>
@@ -123,14 +123,14 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{route('add-holidays')}}" class="nav-link">
-                <i class="fa fa-caret-right nav-icon"></i>
+              <a href="{{route('add-holidays')}}" id="add-holidays" class="nav-link">
+                <i class="fa fa-tree nav-icon" style="margin-left:10px"></i>
                 <p>Add Holiday</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/holiday-listing" class="nav-link">
-                <i class="fa fa-caret-right nav-icon"></i>
+              <a href="{{route('holiday-listing')}}" id="holiday-listing" class="nav-link">
+                <i class="fa fa-table nav-icon" style="margin-left:10px"></i>
                 <p>Holiday List</p>
               </a>
             </li>
@@ -143,14 +143,14 @@
       <!-- Downloadable forms -->
       <li class="nav-item">
         <a href="/download-forms" class="nav-link">
-          <i class="fa fa-file-excel nav-icon"></i>
+          <i class="fa fa-file-excel nav-icon" style="margin-left:10px"></i>
           <p>Download Forms</p>
         </a>
       </li>
       <!-- policy -->
       <li class="nav-item">
         <a href="/hr-policy" class="nav-link">
-        <i class="fa fa-file-pdf nav-icon"></i>
+        <i class="fa fa-file-pdf nav-icon" style="margin-left:10px"></i>
           <p>HR Policy</p>
         </a>
       </li>
@@ -158,3 +158,36 @@
       <!-- DEFAULT -->
     </ul>
   </nav>
+
+  <script>
+    const MENUS = {
+      employees: ['add-employee', 'employee-manager', 'upload-emp'], 
+      roles: ['add-role', 'role-list'], 
+      assets: ['add-asset', 'asset-listing', 'assign-asset', 'assignment-listing'], 
+      leaves: ['apply-leave', 'my-leave-list', 'add-leave-type', 'leave-type-listing', 'total-leave-list'],
+      attendance: ['attendance-upload'],
+      holiday: ['add-holidays', 'holiday-listing',]
+    }
+
+    const getRoute = () => {
+      return "{{ Route::current()->getName() }}"
+    }
+
+    const toggleOpen = (route) => {
+      console.log(route)
+      var nav = document.getElementById(route)
+      nav.classList.add("active")
+      Object.keys(MENUS).forEach(key => {
+        if(MENUS[key].includes(route)){
+          var element = document.getElementById(key).parentElement
+          console.log(element)
+          element.classList.add("menu-open")
+        }
+      })
+    }
+
+    toggleOpen(getRoute())
+
+
+
+  </script>

@@ -143,7 +143,7 @@ class EmpController extends Controller
 
     }
 
-    public function showEmployeeTmp()
+    public function showEmployee()
     {
         $logger = new Logger('my_logger');
         // Now add some handlers
@@ -156,7 +156,7 @@ class EmpController extends Controller
         return view('pages.employee.list', compact('employees'));
     }
 
-    public function showEmployee()
+    public function showEmployeeOrig()
     {
         $logger = new Logger('my_logger');
         // Now add some handlers

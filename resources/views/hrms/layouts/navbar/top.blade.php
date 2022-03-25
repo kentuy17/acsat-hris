@@ -175,7 +175,7 @@
           </li>
           <li class="user-footer">
             <a href="#" class="btn btn-default btn-flat">Profile</a>
-            <a href="#" class="btn btn-default btn-flat float-right">Sign out</a>
+            <a href="/logout" class="btn btn-default btn-flat float-right">Sign out</a>
           </li>
         </ul>
       </li>

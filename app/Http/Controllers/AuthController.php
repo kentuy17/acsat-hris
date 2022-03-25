@@ -67,14 +67,14 @@
             $events   = $this->convertToArray(Event::where('date', '>', Carbon::now())->orderBy('date', 'desc')->take(3)->get());
             $meetings = $this->convertToArray(Meeting::where('date', '>', Carbon::now())->orderBy('date', 'desc')->take(3)->get());
 
-            return view('hrms.dashboard', compact('events', 'meetings'));
+            return view('hrms.auth.welcum', compact('events', 'meetings'));
         }
 
         public function welcome()
         {
             // $this->logger->info(\Auth::user());
 
-            return view('hrms.auth.welcome');
+            return view('hrms.auth.welcum');
         }
 
         public function welcum(){

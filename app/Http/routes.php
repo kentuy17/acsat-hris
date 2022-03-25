@@ -92,11 +92,11 @@ Route::group(['middleware' => ['auth']], function ()
 
     //Routes for Role.
 
-    Route::get('add-role', ['as' => 'add-role', 'uses' => 'RoleController@addRole']);
+    // Route::get('add-role', ['as' => 'add-role', 'uses' => 'RoleController@addRole']);
 
-    Route::post('add-role', ['as' => 'add-role', 'uses' => 'RoleController@processRole']);
+    // Route::post('add-role', ['as' => 'add-role', 'uses' => 'RoleController@processRole']);
 
-    Route::get('role-list', ['as' => 'role-list', 'uses' => 'RoleController@showRole']);
+    // Route::get('role-list', ['as' => 'role-list', 'uses' => 'RoleController@showRole']);
 
     Route::get('edit-role/{id}', ['as' => 'edit-role', 'uses' => 'RoleController@showEdit']);
 
@@ -117,34 +117,6 @@ Route::group(['middleware' => ['auth']], function ()
     Route::post('edit-expense/{id}', ['as' => 'edit-expense', 'uses' => 'ExpenseController@doEdit']);
 
     Route::get('delete-expense/{id}', ['as' => 'delete-expense', 'uses' => 'ExpenseController@doDelete']);
-
-    //Routes for Leave.
-
-    Route::get('add-leave-type', ['as' => 'add-leave-type', 'uses' => 'LeaveController@addLeaveType']);
-
-    Route::post('add-leave-type', ['as' => 'add-leave-type', 'uses' => 'LeaveController@processLeaveType']);
-
-    Route::get('leave-type-listing', ['as' => 'leave-type-listing', 'uses' => 'LeaveController@showLeaveType']);
-
-    Route::get('edit-leave-type/{id}', ['as' => 'edit-leave-type', 'uses' => 'LeaveController@showEdit']);
-
-    Route::post('edit-leave-type/{id}', ['as' => 'edit-leave-type', 'uses' => 'LeaveController@doEdit']);
-
-    Route::get('delete-leave-type/{id}', ['as' => 'delete-leave-type', 'uses' => 'LeaveController@doDelete']);
-
-    Route::get('apply-leave', ['as' => 'apply-leave', 'uses' => 'LeaveController@doApply']);
-
-    Route::post('apply-leave', ['as' => 'apply-leave', 'uses' => 'LeaveController@processApply']);
-
-    Route::get('my-leave-list', ['as' => 'my-leave-list', 'uses' => 'LeaveController@showMyLeave']);
-
-    Route::get('total-leave-list', ['as' => 'total-leave-list', 'uses' => 'LeaveController@showAllLeave']);
-
-    Route::post('total-leave-list', 'LeaveController@searchLeave');
-
-    Route::get('leave-drafting', ['as' => 'leave-drafting', 'uses' => 'LeaveController@showLeaveDraft']);
-
-    Route::post('leave-drafting', ['as' => 'leave-drafting', 'uses' => 'LeaveController@createLeaveDraft']);
 
     //Routes for Attendance.
 
@@ -199,18 +171,6 @@ Route::group(['middleware' => ['auth']], function ()
     Route::post('approve-leave', 'LeaveController@approveLeave');
 
     Route::post('disapprove-leave', 'LeaveController@disapproveLeave');
-    
-    Route::get('add-holidays', ['as'=>'add-holidays', 'uses' => 'LeaveController@showHolidays']);
-
-    Route::post('add-holidays', ['as'=>'add-holidays', 'uses' => 'LeaveController@processHolidays']);
-
-    Route::get('holiday-listing', 'LeaveController@showHoliday');
-
-    Route::get('edit-holiday/{id}', 'LeaveController@showEditHoliday');
-
-    Route::post('edit-holiday/{id}', 'LeaveController@doEditHoliday');
-
-    Route::get('delete-holiday/{id}', 'LeaveController@deleteHoliday');
 
     //Routes for Event.
 
@@ -337,8 +297,6 @@ Route::group(['middleware' => ['auth']], function ()
 
     Route::get('delete-project-assignment/{id}', ['as' => 'delete-project-assignment', 'uses' => 'ProjectController@doDeleteAssign']);
 
-
-    //Route::get('assign-project', 'ProjectController@assignProject')->name('assign-project');
     Route::get('bower', function () { 
         return view('hrms/layouts/starter');
     });
@@ -351,5 +309,47 @@ Route::group(['middleware' => ['auth']], function ()
     Route::get('add-employee-tmp', 'EmpController@addEmployeeTmp');
     Route::post('add-employee-tmp', ['as' => 'add-employee-tmp', 'uses' => 'EmpController@processEmployeeTmp']);
     Route::get('list-employee-tmp', ['as' => 'list-employee-tmp', 'uses' => 'EmpController@showEmployeeTmp']);
+    Route::get('list-employee-tmp', ['as' => 'list-employee-tmp', 'uses' => 'EmpController@showEmployeeTmp']);
+
+    // roles
+    Route::get('add-role', ['as' => 'add-role', 'uses' => 'RoleController@addRole']);
+    Route::post('add-role', ['as' => 'add-role', 'uses' => 'RoleController@processRole']);
+    Route::get('role-list', ['as' => 'role-list', 'uses' => 'RoleController@showRole']);
+
+    // leave
+    Route::get('apply-leave', ['as' => 'apply-leave', 'uses' => 'LeaveController@doApply']);
+    Route::post('apply-leave', ['as' => 'apply-leave', 'uses' => 'LeaveController@processApply']);
+    Route::get('my-leave-list', ['as' => 'my-leave-list', 'uses' => 'LeaveController@showMyLeave']);
+    Route::get('add-leave-type', ['as' => 'add-leave-type', 'uses' => 'LeaveController@addLeaveType']);
+    Route::post('add-leave-type', ['as' => 'add-leave-type', 'uses' => 'LeaveController@processLeaveType']);
+    Route::get('leave-type-listing', ['as' => 'leave-type-listing', 'uses' => 'LeaveController@showLeaveType']);
+    Route::get('total-leave-list', ['as' => 'total-leave-list', 'uses' => 'LeaveController@showAllLeave']);
+    
+    // holiday
+    Route::get('add-holidays', ['as'=>'add-holidays', 'uses' => 'LeaveController@showHolidays']);
+    Route::post('add-holidays', ['as'=>'add-holidays', 'uses' => 'LeaveController@insertHoliday']);
+    Route::get('holiday-listing', ['as'=>'holiday-listing', 'uses' => 'LeaveController@showHoliday']);
+    // ------------
+    
+
+    
+
+    Route::get('edit-holiday/{id}', 'LeaveController@showEditHoliday');
+
+    Route::post('edit-holiday/{id}', 'LeaveController@doEditHoliday');
+
+    Route::get('delete-holiday/{id}', 'LeaveController@deleteHoliday');
+
+
+
+
+    // TODO LATERS
+    Route::get('edit-leave-type/{id}', ['as' => 'edit-leave-type', 'uses' => 'LeaveController@showEdit']);
+    Route::post('edit-leave-type/{id}', ['as' => 'edit-leave-type', 'uses' => 'LeaveController@doEdit']);
+    Route::get('delete-leave-type/{id}', ['as' => 'delete-leave-type', 'uses' => 'LeaveController@doDelete']);
+    Route::post('total-leave-list', 'LeaveController@searchLeave');
+    Route::get('leave-drafting', ['as' => 'leave-drafting', 'uses' => 'LeaveController@showLeaveDraft']);
+    Route::post('leave-drafting', ['as' => 'leave-drafting', 'uses' => 'LeaveController@createLeaveDraft']);
+
 
 });

@@ -12,27 +12,36 @@ use App\Http\Requests;
 
 class RoleController extends Controller
 {
-    public function addRole()
-    {
-        return view('hrms.role.add_role');
+    // public function addRole()
+    // {
+    //     return view('hrms.role.add_role');
+    // }
+
+    public function addRole(){
+        $roles = Role::get();
+        return view('pages.roles.add_role', compact('roles'));
     }
 
-    Public function processRole(Request $request)
-    {
-        //Role::create(['name' => $request->name, 'description' => $request->description]);
+    Public function processRole(Request $request){
         $role = new Role;
-        $role->name = $request->name;
+        $role->name = $request->role;
         $role->description = $request->description;
         $role->save();
         \Session::flash('flash_message', 'Role successfully added!');
-        return redirect()->back();
 
+        $roles = Roll::get();
+        return view('hrms.roles.list', compact('roles'));
     }
 
-    public function showRole()
-    {
-        $roles = Role::paginate(10);
-        return view('hrms.role.show_role', compact('roles'));
+    // public function showRole()
+    // {
+    //     $roles = Role::paginate(10);
+    //     return view('hrms.role.show_role', compact('roles'));
+    // }
+
+    public function showRole(){
+        $roles = Role::get();
+        return view('pages.roles.list', compact('roles'));
     }
 
     public function showEdit($id)

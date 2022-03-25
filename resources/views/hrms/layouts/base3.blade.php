@@ -135,7 +135,7 @@
 <script src="{{ URL::asset('assets/bower/plugins/chart.js/Chart.min.js') }}"></script>
 
 <!-- AdminLTE for demo purposes -->
-<script src="{{ URL::asset('assets/bower/js/demo.js') }}"></script>
+<!-- <script src="{{ URL::asset('assets/bower/js/demo.js') }}"></script> -->
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{ URL::asset('assets/bower/js/pages/dashboard3.js') }}"></script>
 

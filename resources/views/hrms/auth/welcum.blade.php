@@ -10,7 +10,7 @@
             <div class="inner">
               <h3>150</h3>
 
-              <p>New Orders</p>
+              <p>Employee Count</p>
             </div>
             <div class="icon">
               <i class="ion ion-bag"></i>
@@ -21,9 +21,9 @@
         <div class="col-lg-3 col-6">
           <div class="small-box bg-success">
             <div class="inner">
-              <h3>53<sup style="font-size: 20px">%</sup></h3>
+              <h3>80<sup style="font-size: 20px">%</sup></h3>
 
-              <p>Bounce Rate</p>
+              <p>Completion Rate</p>
             </div>
             <div class="icon">
               <i class="ion ion-stats-bars"></i>
@@ -34,7 +34,7 @@
         <div class="col-lg-3 col-6">
           <div class="small-box bg-warning">
             <div class="inner">
-              <h3>44</h3>
+              <h3>21</h3>
 
               <p>User Registrations</p>
             </div>
