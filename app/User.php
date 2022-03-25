@@ -41,6 +41,13 @@ class User extends Authenticatable
         return $this->hasOne('App\Models\UserRole', 'user_id', 'id');
     }
 
+    public function roleName(){
+        $userId = Auth::user()->id;
+        $userRole = UserRole::where('user_id', $userId)->first();
+        $role = Role::where('id', $userRole->role_id)->first();
+        return $role->name;
+    }
+
     public function isHR()
     {
         $userId = Auth::user()->id;
