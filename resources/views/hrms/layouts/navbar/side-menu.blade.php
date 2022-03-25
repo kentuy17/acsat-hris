@@ -161,7 +161,7 @@
 
   <script>
     const MENUS = {
-      employees: ['add-employee', 'employee-manager', 'upload-emp'], 
+      employees: ['add-employee', 'employee-manager', 'upload-emp', 'list-employee'], 
       roles: ['add-role', 'role-list'], 
       assets: ['add-asset', 'asset-listing', 'assign-asset', 'assignment-listing'], 
       leaves: ['apply-leave', 'my-leave-list', 'add-leave-type', 'leave-type-listing', 'total-leave-list'],
@@ -173,15 +173,24 @@
       return "{{ Route::current()->getName() }}"
     }
 
+    const NO_NAV = ['welcom', 'dashboard']
+    
     const toggleOpen = (route) => {
-      console.log(route)
-      var nav = document.getElementById(route)
-      nav.classList.add("active")
+      var hasNav = NO_NAV.includes(route)
+      console.log(hasNav)
+
+      if(hasNav || route) {
+        console.log(route, 'route')
+        var nav = document.getElementById(route)
+        nav.classList.add("active")
+      }
+      
       Object.keys(MENUS).forEach(key => {
         if(MENUS[key].includes(route)){
           var element = document.getElementById(key).parentElement
-          console.log(element)
-          element.classList.add("menu-open")
+          if(hasNav || route){
+            element.classList.add("menu-open")
+          }
         }
       })
     }

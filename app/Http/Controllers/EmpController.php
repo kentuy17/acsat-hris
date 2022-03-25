@@ -23,6 +23,13 @@ use Monolog\Handler\FirePHPHandler;
 
 class EmpController extends Controller
 {
+    
+    public function fireLogger($data){
+      $logger = new Logger('my_logger');
+      $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Logger::DEBUG));
+      $logger->pushHandler(new FirePHPHandler());
+      $logger->info(json_encode($data));
+    }
 
     public function addEmployee(){
       $roles = Role::get();
@@ -34,298 +41,229 @@ class EmpController extends Controller
       return view('hrms.employee.add', compact('roles'));
     }
 
-    public function processEmployeeTmp(Request $request){
-      $filename = public_path('assets/bower/img/default-v2.jpg');
-        if ($request->file('photo')) {
-            $file = $request->file('photo');
-            $filename = str_random(12);
-            $fileExt = $file->getClientOriginalExtension();
-            $allowedExtension = ['jpg', 'jpeg', 'png'];
-            $destinationPath = public_path('photos');
-            if (!in_array($fileExt, $allowedExtension)) {
-                return redirect()->back()->with('message', 'File not allowed');
-            }
-            $filename = $filename . '.' . $fileExt;
-            $file->move($destinationPath, $filename);
+    public function processEmployee(Request $request){
+      $filename = public_path('assets\\bower\\img\\default-v2.jpg');
+      if ($request->file('photo')) {
+        $file = $request->file('photo');
+        $filename = str_random(12);
+        $fileExt = $file->getClientOriginalExtension();
+        $allowedExtension = ['jpg', 'jpeg', 'png'];
+        $destinationPath = public_path('photos');
+        if (!in_array($fileExt, $allowedExtension)) {
+          return redirect()->back()->with('message', 'File not allowed');
         }
+        $filename = $filename . '.' . $fileExt;
+        $file->move($destinationPath, $filename);
+      }
 
-        $user           = new User;
-        $user->name     = $request->emp_name;
-        $user->email    = str_replace(' ', '_', $request->emp_name) . '@acsat.ph';
-        $user->password = bcrypt('123456');
-        $user->save();
+      $user           = new User;
+      $user->name     = $request->emp_name;
+      $user->email    = str_replace(' ', '_', $request->emp_name) . '@acsat.ph';
+      $user->password = bcrypt('123456');
+      $user->save();
 
-        $emp              = new Employee;
-        $emp->photo       = $filename;
-        $emp->name        = $request->emp_name;
-        $emp->code        = $request->emp_code;
-        $emp->status      = $request->emp_status;
-        $emp->gender      = $request->gender;
-        $emp->department  = $request->department;
-        $emp->salary      = $request->salary;
-        $emp->user_id     = $user->id;
-        $emp->save();
+      $emp              = new Employee;
+      $emp->photo       = $filename;
+      $emp->name        = $request->emp_name;
+      $emp->code        = $request->emp_code;
+      $emp->status      = $request->emp_status;
+      $emp->gender      = $request->gender;
+      $emp->department  = $request->department;
+      $emp->salary      = $request->salary;
+      $emp->user_id     = $user->id;
+      $emp->save();
 
-        $userRole          = new UserRole();
-        $userRole->role_id = $request->role;
-        $userRole->user_id = $user->id;
-        $userRole->save();
-        //$emp->userrole()->create(['role_id' => $request->role]);
+      $new_user = User::where([
+          'name' => $request->emp_name,
+          'password' => str_replace(' ', '_', $request->emp_name) . '@acsat.ph'
+        ])->first();
 
-        // return json_encode(['title' => 'Success', 'message' => 'Employee added successfully', 'class' => 'modal-header-success']);
-        return view('hrms.employee.show_emp', compact('roles'));
+      $this->fireLogger($new_user);
+      return;
+
+      $userRole          = new UserRole();
+      $userRole->role_id = $request->role;
+      $userRole->user_id = $new_user->id;
+      $userRole->save();
+      $emp->userrole()->create(['role_id' => $request->role]);
+
+      // return json_encode(['title' => 'Success', 'message' => 'Employee added successfully', 'class' => 'modal-header-success']);
+      return view('pages.employee.list', compact('roles'));
     }
 
-    public function processEmployee(Request $request)
-    {
-        $filename = public_path('photos/a.png');
-        if ($request->file('photo')) {
-            $file             = $request->file('photo');
-            $filename         = str_random(12);
-            $fileExt          = $file->getClientOriginalExtension();
-            $allowedExtension = ['jpg', 'jpeg', 'png'];
-            $destinationPath  = public_path('photos');
-            if (!in_array($fileExt, $allowedExtension)) {
-                return redirect()->back()->with('message', 'Extension not allowed');
-            }
-            $filename = $filename . '.' . $fileExt;
-            $file->move($destinationPath, $filename);
+    public function showEmployee(){
+      $logger = new Logger('my_logger');
+      // Now add some handlers
+      $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Logger::DEBUG));
+      $logger->pushHandler(new FirePHPHandler());
 
-        }
+      $employees  = User::with('employee', 'role.role')->paginate(15);
+      $logger->info(json_encode($employees));
 
-        $user           = new User;
-        $user->name     = $request->emp_name;
-        $user->email    = str_replace(' ', '_', $request->emp_name) . '@acsat.ph';
-        $user->password = bcrypt('123456');
-        $user->save();
-
-        $emp                       = new Employee;
-        $emp->photo                = $filename;
-        $emp->name                 = $request->emp_name;
-        $emp->code                 = $request->emp_code;
-        $emp->status               = $request->emp_status;
-        $emp->gender               = $request->gender;
-        $emp->date_of_birth        = date_format(date_create($request->dob), 'Y-m-d');
-        $emp->date_of_joining      = date_format(date_create($request->doj), 'Y-m-d');
-        $emp->number               = $request->number;
-        $emp->qualification        = $request->qualification;
-        $emp->emergency_number     = $request->emergency_number;
-        $emp->pan_number           = $request->pan_number;
-        $emp->father_name          = $request->father_name;
-        $emp->current_address      = $request->current_address;
-        $emp->permanent_address    = $request->permanent_address;
-        $emp->formalities          = $request->formalities;
-        $emp->offer_acceptance     = $request->offer_acceptance;
-        $emp->probation_period     = $request->probation_period;
-        $emp->date_of_confirmation = date_format(date_create($request->date_of_confirmation), 'Y-m-d');
-        $emp->department           = $request->department;
-        $emp->salary               = $request->salary;
-        $emp->account_number       = $request->account_number;
-        $emp->bank_name            = $request->bank_name;
-        $emp->ifsc_code            = $request->ifsc_code;
-        $emp->pf_account_number    = $request->pf_account_number;
-        $emp->un_number            = $request->un_number;
-        $emp->pf_status            = $request->pf_status;
-        $emp->date_of_resignation  = date_format(date_create($request->date_of_resignation), 'Y-m-d');
-        $emp->notice_period        = $request->notice_period;
-        $emp->last_working_day     = date_format(date_create($request->last_working_day), 'Y-m-d');
-        $emp->full_final           = $request->full_final;
-        $emp->user_id              = $user->id;
-        $emp->save();
-
-        $userRole          = new UserRole();
-        $userRole->role_id = $request->role;
-        $userRole->user_id = $user->id;
-        $userRole->save();
-        //$emp->userrole()->create(['role_id' => $request->role]);
-
-        return json_encode(['title' => 'Success', 'message' => 'Employee added successfully', 'class' => 'modal-header-success']);
-
+      return view('pages.employee.list', compact('employees'));
     }
 
-    public function showEmployee()
-    {
-        $logger = new Logger('my_logger');
-        // Now add some handlers
-        $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Logger::DEBUG));
-        $logger->pushHandler(new FirePHPHandler());
+    public function showEmployeeOrig(){
+      $emps   = User::with('employee', 'role.role')->paginate(15);
+      $fuck = 'fuck';
+      $column = '';
+      $string = '';
 
-        $employees  = User::with('employee', 'role.role')->paginate(15);
-        $logger->info(json_encode($employees));
-
-        return view('pages.employee.list', compact('employees'));
+      return view('hrms.employee.show_emp', compact('emps','string','column'));
     }
 
-    public function showEmployeeOrig()
-    {
-        $logger = new Logger('my_logger');
-        // Now add some handlers
-        $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Logger::DEBUG));
-        $logger->pushHandler(new FirePHPHandler());
+    public function showEdit($id){
+      //$emps = Employee::whereid($id)->with('userrole.role')->first();
+      $emps = User::where('id', $id)->with('employee', 'role.role')->first();
 
-        $emps   = User::with('employee', 'role.role')->paginate(15);
-        $fuck = 'fuck';
-        $logger->info(json_encode($emps));
-        $column = '';
-        $string = '';
-
-        return view('hrms.employee.show_emp', compact('emps','string','column'));
+      $roles = Role::get();
+      return view('hrms.employee.add', compact('emps', 'roles'));
     }
 
-    public function showEdit($id)
-    {
-        //$emps = Employee::whereid($id)->with('userrole.role')->first();
-        $emps = User::where('id', $id)->with('employee', 'role.role')->first();
+    public function doEdit(Request $request, $id) {
+      $filename = public_path('photos/a.png');
+      if ($request->file('photo')) {
+          $file             = $request->file('photo');
+          $filename         = str_random(12);
+          $fileExt          = $file->getClientOriginalExtension();
+          $allowedExtension = ['jpg', 'jpeg', 'png'];
+          $destinationPath  = public_path('photos');
+          if (!in_array($fileExt, $allowedExtension)) {
+              return redirect()->back()->with('message', 'Extension not allowed');
+          }
+          $filename = $filename . '.' . $fileExt;
+          $file->move($destinationPath, $filename);
 
-        $roles = Role::get();
-        return view('hrms.employee.add', compact('emps', 'roles'));
-    }
+      }
 
-    public function doEdit(Request $request, $id)
-    {
-        $filename = public_path('photos/a.png');
-        if ($request->file('photo')) {
-            $file             = $request->file('photo');
-            $filename         = str_random(12);
-            $fileExt          = $file->getClientOriginalExtension();
-            $allowedExtension = ['jpg', 'jpeg', 'png'];
-            $destinationPath  = public_path('photos');
-            if (!in_array($fileExt, $allowedExtension)) {
-                return redirect()->back()->with('message', 'Extension not allowed');
-            }
-            $filename = $filename . '.' . $fileExt;
-            $file->move($destinationPath, $filename);
+      $photo             = $request->$filename;
+      $emp_name          = $request->name;
+      $emp_code          = $request->code;
+      $emp_status        = $request->status;
+      $gender            = $request->gender;
+      $dob               = date_format(date_create($request->date_of_birth), 'Y-m-d');
+      $doj               = date_format(date_create($request->date_of_joining), 'Y-m-d');
+      $mob_number        = $request->number;
+      $qualification     = $request->qualification;
+      $emer_number       = $request->emergency_number;
+      $pan_number        = $request->pan_number;
+      $father_name       = $request->father_name;
+      $address           = $request->current_address;
+      $permanent_address = $request->permanent_address;
+      $formalities       = $request->formalities;
+      $offer_acceptance  = $request->offer_acceptance;
+      $prob_period       = $request->probation_period;
+      $doc               = date_format(date_create($request->date_of_confirmation), 'Y-m-d');
+      $department        = $request->department;
+      $salary            = $request->salary;
+      $account_number    = $request->account_number;
+      $bank_name         = $request->bank_name;
+      $ifsc_code         = $request->ifsc_code;
+      $pf_account_number = $request->pf_account_number;
+      $un_number         = $request->un_number;
+      $pf_status         = $request->pf_status;
+      $dor               = date_format(date_create($request->date_of_resignation), 'Y-m-d');
+      $notice_period     = $request->notice_period;
+      $last_working_day  = date_format(date_create($request->last_working_day), 'Y-m-d');
+      $full_final        = $request->full_final;
 
-        }
+      //$edit = Employee::findOrFail($id);
+      $edit = Employee::where('user_id', $id)->first();
 
-        $photo             = $request->$filename;
-        $emp_name          = $request->name;
-        $emp_code          = $request->code;
-        $emp_status        = $request->status;
-        $gender            = $request->gender;
-        $dob               = date_format(date_create($request->date_of_birth), 'Y-m-d');
-        $doj               = date_format(date_create($request->date_of_joining), 'Y-m-d');
-        $mob_number        = $request->number;
-        $qualification     = $request->qualification;
-        $emer_number       = $request->emergency_number;
-        $pan_number        = $request->pan_number;
-        $father_name       = $request->father_name;
-        $address           = $request->current_address;
-        $permanent_address = $request->permanent_address;
-        $formalities       = $request->formalities;
-        $offer_acceptance  = $request->offer_acceptance;
-        $prob_period       = $request->probation_period;
-        $doc               = date_format(date_create($request->date_of_confirmation), 'Y-m-d');
-        $department        = $request->department;
-        $salary            = $request->salary;
-        $account_number    = $request->account_number;
-        $bank_name         = $request->bank_name;
-        $ifsc_code         = $request->ifsc_code;
-        $pf_account_number = $request->pf_account_number;
-        $un_number         = $request->un_number;
-        $pf_status         = $request->pf_status;
-        $dor               = date_format(date_create($request->date_of_resignation), 'Y-m-d');
-        $notice_period     = $request->notice_period;
-        $last_working_day  = date_format(date_create($request->last_working_day), 'Y-m-d');
-        $full_final        = $request->full_final;
+      if (!empty($photo)) {
+          $edit->photo = $photo;
+      }
+      if (!empty($emp_name)) {
+          $edit->name = $emp_name;
+      }
+      if (!empty($emp_code)) {
+          $edit->code = $emp_code;
+      }
+      if (!empty($emp_status)) {
+          $edit->status = $emp_status;
+      }
+      if (!empty($gender)) {
+          $edit->gender = $gender;
+      }
+      if (!empty($dob)) {
+          $edit->date_of_birth = $dob;
+      }
+      if (!empty($doj)) {
+          $edit->date_of_joining = $doj;
+      }
+      if (!empty($mob_number)) {
+          $edit->number = $mob_number;
+      }
+      if (!empty($qualification)) {
+          $edit->qualification = $qualification;
+      }
+      if (!empty($emer_number)) {
+          $edit->emergency_number = $emer_number;
+      }
+      if (!empty($pan_number)) {
+          $edit->pan_number = $pan_number;
+      }
+      if (!empty($father_name)) {
+          $edit->father_name = $father_name;
+      }
+      if (!empty($address)) {
+          $edit->current_address = $address;
+      }
+      if (!empty($permanent_address)) {
+          $edit->permanent_address = $permanent_address;
+      }
+      if (!empty($formalities)) {
+          $edit->formalities = $formalities;
+      }
+      if (!empty($offer_acceptance)) {
+          $edit->offer_acceptance = $offer_acceptance;
+      }
+      if (!empty($prob_period)) {
+          $edit->probation_period = $prob_period;
+      }
+      if (!empty($doc)) {
+          $edit->date_of_confirmation = $doc;
+      }
+      if (!empty($department)) {
+          $edit->department = $department;
+      }
+      if (!empty($salary)) {
+          $edit->salary = $salary;
+      }
+      if (!empty($account_number)) {
+          $edit->account_number = $account_number;
+      }
+      if (!empty($bank_name)) {
+          $edit->bank_name = $bank_name;
+      }
+      if (!empty($ifsc_code)) {
+          $edit->ifsc_code = $ifsc_code;
+      }
+      if (!empty($pf_account_number)) {
+          $edit->pf_account_number = $pf_account_number;
+      }
+      if (!empty($un_number)) {
+          $edit->un_number = $un_number;
+      }
+      if (!empty($pf_status)) {
+          $edit->pf_status = $pf_status;
+      }
+      if (!empty($dor)) {
+          $edit->date_of_resignation = $dor;
+      }
+      if (!empty($notice_period)) {
+          $edit->notice_period = $notice_period;
+      }
+      if (!empty($last_working_day)) {
+          $edit->last_working_day = $last_working_day;
+      }
+      if (!empty($full_final)) {
+          $edit->full_final = $full_final;
+      }
 
-        //$edit = Employee::findOrFail($id);
-        $edit = Employee::where('user_id', $id)->first();
+      $edit->save();
 
-        if (!empty($photo)) {
-            $edit->photo = $photo;
-        }
-        if (!empty($emp_name)) {
-            $edit->name = $emp_name;
-        }
-        if (!empty($emp_code)) {
-            $edit->code = $emp_code;
-        }
-        if (!empty($emp_status)) {
-            $edit->status = $emp_status;
-        }
-        if (!empty($gender)) {
-            $edit->gender = $gender;
-        }
-        if (!empty($dob)) {
-            $edit->date_of_birth = $dob;
-        }
-        if (!empty($doj)) {
-            $edit->date_of_joining = $doj;
-        }
-        if (!empty($mob_number)) {
-            $edit->number = $mob_number;
-        }
-        if (!empty($qualification)) {
-            $edit->qualification = $qualification;
-        }
-        if (!empty($emer_number)) {
-            $edit->emergency_number = $emer_number;
-        }
-        if (!empty($pan_number)) {
-            $edit->pan_number = $pan_number;
-        }
-        if (!empty($father_name)) {
-            $edit->father_name = $father_name;
-        }
-        if (!empty($address)) {
-            $edit->current_address = $address;
-        }
-        if (!empty($permanent_address)) {
-            $edit->permanent_address = $permanent_address;
-        }
-        if (!empty($formalities)) {
-            $edit->formalities = $formalities;
-        }
-        if (!empty($offer_acceptance)) {
-            $edit->offer_acceptance = $offer_acceptance;
-        }
-        if (!empty($prob_period)) {
-            $edit->probation_period = $prob_period;
-        }
-        if (!empty($doc)) {
-            $edit->date_of_confirmation = $doc;
-        }
-        if (!empty($department)) {
-            $edit->department = $department;
-        }
-        if (!empty($salary)) {
-            $edit->salary = $salary;
-        }
-        if (!empty($account_number)) {
-            $edit->account_number = $account_number;
-        }
-        if (!empty($bank_name)) {
-            $edit->bank_name = $bank_name;
-        }
-        if (!empty($ifsc_code)) {
-            $edit->ifsc_code = $ifsc_code;
-        }
-        if (!empty($pf_account_number)) {
-            $edit->pf_account_number = $pf_account_number;
-        }
-        if (!empty($un_number)) {
-            $edit->un_number = $un_number;
-        }
-        if (!empty($pf_status)) {
-            $edit->pf_status = $pf_status;
-        }
-        if (!empty($dor)) {
-            $edit->date_of_resignation = $dor;
-        }
-        if (!empty($notice_period)) {
-            $edit->notice_period = $notice_period;
-        }
-        if (!empty($last_working_day)) {
-            $edit->last_working_day = $last_working_day;
-        }
-        if (!empty($full_final)) {
-            $edit->full_final = $full_final;
-        }
-
-        $edit->save();
-
-        return json_encode(['title' => 'Success', 'message' => 'Employee details successfully updated', 'class' => 'modal-header-success']);
+      return json_encode(['title' => 'Success', 'message' => 'Employee details successfully updated', 'class' => 'modal-header-success']);
     }
 
     public function doDelete($id)
