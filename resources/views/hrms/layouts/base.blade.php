@@ -317,6 +317,7 @@
 
         <!-- YIELD CONTENT -->
 
+        <!-- @yield('content') -->
         @yield('content')
 
         <!-- /YIELD CONTENT -->
@@ -477,11 +478,12 @@
         @if(\Route::getFacadeRoot()->current()->uri() == 'dashboard' || \Route::getFacadeRoot()->current()->uri() == 'welcome' || \Route::getFacadeRoot()->current()->uri() == 'change-password' ||
         \Route::getFacadeRoot()->current()->uri() == 'not-found' )
         <!-- -------------- Page Footer -------------- -->
+        <?php $year = date('Y') ?>
         <footer id="content-footer" class="affix">
             <div class="row">
                 <div class="col-md-7">
-                    <span class="footer-legal">Human Resource Management System © 2020 All rights reserved. By <a
-                                href="mailto:kentuy17@gmail.com?Subject=HRM%20Software" target="_blank">Kenneth</a></span>
+                    <span class="footer-legal">Human Resource Management System © <?=$year?> All rights reserved. By <a
+                                href="mailto:kentuy17@gmail.com?Subject=HRM%20Software" target="_blank">ACSAT</a></span>
                 </div>
                 <div class="col-md-6 text-right">
                     

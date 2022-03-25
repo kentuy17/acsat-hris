@@ -16,6 +16,12 @@
   use App\Http\Requests;
   use Illuminate\Support\Facades\Input;
   use Maatwebsite\Excel\Facades\Excel;
+  use Carbon\Carbon;
+
+  // Firebug
+  use Monolog\Logger;
+  use Monolog\Handler\StreamHandler;
+  use Monolog\Handler\FirePHPHandler;
 
   class LeaveController extends Controller
   {
@@ -31,17 +37,15 @@
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function addLeaveType()
-    {
-      return view('hrms.leave.add_leave_type');
+    public function addLeaveType(){
+      return view('pages.leaves.add_leave_type');
     }
 
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    Public function processLeaveType(Request $request)
-    {
+    Public function processLeaveType(Request $request){
       $leave = new LeaveType;
       $leave->leave_type = $request->leave_type;
       $leave->description = $request->description;
@@ -49,7 +53,6 @@
 
       \Session::flash('flash_message', 'Leave Type successfully added!');
       return redirect()->back();
-
     }
 
     /**
@@ -57,8 +60,8 @@
      */
     public function showLeaveType()
     {
-      $leaves = LeaveType::paginate(10);
-      return view('hrms.leave.show_leave_type', compact('leaves'));
+      $types = LeaveType::get();
+      return view('pages.leaves.leave_types', compact('types'));
     }
 
     /**
@@ -109,24 +112,27 @@
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function doApply()
-    {
+    public function doApply(){
       $leaves = LeaveType::get();
-      return view('hrms.leave.apply_leave', compact('leaves'));
+      return view('pages.leaves.apply_leave', compact('leaves'));
+    }
+
+    public function fileLogger($data){
+      $logger = new Logger('my_logger');
+      $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Logger::DEBUG));
+      $logger->pushHandler(new FirePHPHandler());
+
+      $logger->info(json_encode($data));
     }
 
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function processApply(Request $request)
-    {
-      $days = explode('days leave', $request->number_of_days);
-      if (sizeof($days) < 2) {
-        $days = explode('day leave', $request->number_of_days);
-      }
-      $number_of_days = $this->wordsToNumber($days[0]);
-
+    public function processApply(Request $request){
+      $from = explode('-', $request->date_from);
+      $to = explode('-', $request->date_to);
+      $number_of_days = ($to[2] - $from[2]) + 1;
       $leave = new EmployeeLeaves;
 
       $team = Team::where('member_id', \Auth::user()->employee->id)->first();
@@ -144,10 +150,9 @@
       }
 
       $leave->user_id = \Auth::user()->id;
-      $leave->date_from = date_format(date_create($request->dateFrom), 'Y-m-d');
-      $leave->date_to = date_format(date_create($request->dateTo), 'Y-m-d');
-      $leave->from_time = $request->time_from;
-      $leave->to_time = $request->time_to;
+      // $leave->user_id = 7;
+      $leave->date_from = date_format(date_create($request->date_from), 'Y-m-d');
+      $leave->date_to = date_format(date_create($request->date_to), 'Y-m-d');
       $leave->reason = $request->reason;
       $leave->days = $number_of_days;
       $leave->status = '0';
@@ -183,33 +188,36 @@
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showMyLeave()
-    {
+    public function showMyLeave(){
+      $leaves = EmployeeLeaves::with('leaveType')
+        ->where('user_id', \Auth::user()->id)
+        ->get();
 
-      $leaves = EmployeeLeaves::where('user_id', \Auth::user()->id)->paginate(15);
-      return view('hrms.leave.show_my_leaves', compact('leaves'));
+      $leave_status = array('For Approval', 'Approved', 'Rejected');
+
+      return view(
+        'pages.leaves.my_leave_list', 
+        compact('leaves', 'leave_status')
+      );
     }
 
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showAllLeave()
-    {
-      if(!\Auth::user()->isHR())
-      {
-        $leaves = EmployeeLeaves::with('user.employee')->where('tl_id', \Auth::user()->id)->orWhere('manager_id', \Auth::user()->id)->paginate(15);
+    public function showAllLeave(){
+      $leaves = EmployeeLeaves::with('user.employee')->get();
+      $status = array('Pending', 'Approved', 'Rejected');
+      
+      if(!\Auth::user()->isHR()){
+        $leaves = EmployeeLeaves::with('user.employee')
+          ->where('tl_id', \Auth::user()->id)
+          ->orWhere('manager_id', \Auth::user()->id)
+          ->get();
       }
-      else
-      {
-        $leaves = EmployeeLeaves::with('user.employee')->paginate(15);
-      }
-
-      $column = '';
-      $string = '';
-      $dateFrom = '';
-      $dateTo = '';
-      return view('hrms.leave.total_leave_request', compact('leaves', 'column', 'string','dateFrom','dateTo'));
+      
+      $this->fileLogger($leaves);
+      return view('pages.leaves.employee_leaves', compact('leaves', 'status'));
     }
 
     /**
@@ -509,15 +517,39 @@
       return json_encode('success');
     }
 
-
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showHolidays()
-    {
-        $holidays = Holiday::paginate(10);
-        $filenames = HolidayFilenames::get();
-        return view('hrms.leave.holiday',compact('holidays', 'filenames'));
+    public function showHolidays(){
+      $holiday_type = ['Legal', 'Special', 'Special Non-working'];
+      return view(
+        'pages.holiday.add_holiday', 
+        compact('holiday_type')
+      );
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function insertHoliday(Request $request){
+      $holiday = new Holiday;
+      $holiday->occasion = $request->holiday;
+      $holiday->date_from = $request->holi_date;
+      $holiday->date_to = $request->holi_date;
+      $holiday->type = $request->type;
+      $holiday->note = $request->note;
+      $holiday->created_at = date('Y-m-d H:i:s');
+      $holiday->save();
+
+      $holidays = Holiday::whereBetween('date_from', [
+        Carbon::now()->startOfYear(),
+        Carbon::now()->endOfYear()
+      ])->get();
+      $holiday_type = ['Legal', 'Special', 'Special Non-working'];
+
+      return view('pages.holiday.holiday_list',compact('holidays','holiday_type'));
     }
 
     /**
@@ -580,9 +612,9 @@
     }
 
       public function showHoliday(){
-
-         $holidays = Holiday::paginate(10);
-         return view('hrms.leave.show_holiday',compact('holidays'));
+         $holidays = Holiday::get();
+         $holiday_type = ['Legal', 'Special', 'Special Non-working'];
+         return view('pages.holiday.holiday_list',compact('holidays', 'holiday_type'));
       }
 
       public function showEditHoliday($id){

@@ -9,7 +9,7 @@ class EmployeeLeaves extends Model
 {
     public function leaveType()
     {
-        return $this->hasOne('App\Models\LeaveType', 'id', 'leave_type_id');
+        return $this->belongsTo('App\Models\LeaveType', 'leave_type_id', 'id');
     }
 
     public function user()

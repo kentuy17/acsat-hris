@@ -1,149 +1,106 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <!-- -------------- Meta and Title -------------- -->
-    <meta charset="utf-8">
-    <title>Human Resource Management System</title>
-    <meta name="keywords" content="HTML5, Bootstrap 3, Admin Template, UI Theme"/>
-    <meta name="description" content="Alliance - A Responsive HTML5 Admin UI Framework">
-    <meta name="author" content="ThemeREX">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Human Resource Management System | Login v2</title>
 
-    <!-- -------------- Fonts -------------- -->
-    <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'>
-    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet'
-          type='text/css'>
-
-    <!-- -------------- CSS - theme -------------- -->
-    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
-
-    <!-- -------------- CSS - allcp forms -------------- -->
-    <link rel="stylesheet" type="text/css" href="/assets/allcp/forms/css/forms.css">
-
-    <!-- -------------- Favicon -------------- -->
-    <link rel="shortcut icon" href="/assets/img/favicon.png">
-
-    <!-- -------------- IE8 HTML5 support  -------------- -->
-    <!--[if lt IE 9]>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="{{ URL::asset('assets/bower/css/fonts.googleapis.css') }}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{{ URL::asset('assets/bower/plugins/fontawesome-free/css/all.min.css') }}">
+  <!-- icheck bootstrap -->
+  <!-- <link rel="stylesheet" href="../../plugins/icheck-bootstrap/icheck-bootstrap.min.css"> -->
+  <link rel="stylesheet" href="{{ URL::asset('assets/bower/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ URL::asset('assets/bower/css/adminlte.min.css') }}">
+  <link rel="icon" href="../cropped-favicon-512-192x192.png?x55520" sizes="192x192" />
+  <style>
+    body.login-page {
+      background-image: url('assets/img/bg1.jpg');
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+  </style>
 </head>
-
-<body class="utility-page sb-l-c sb-r-c">
-
-<!-- -------------- Body Wrap  -------------- -->
-<div id="main" class="animated fadeIn">
-
-    <!-- -------------- Main Wrapper -------------- -->
-    <section id="content_wrapper">
-
-        <div id="canvas-wrapper">
-            <canvas id="demo-canvas"></canvas>
-        </div>
-
-        <!-- -------------- Content -------------- -->
-        <section id="content">
-
-            <!-- -------------- Login Form -------------- -->
-            <div class="allcp-form theme-primary mw320" id="login">
-                <div class="bg-primary text-center mb20 br3 pv15">
-                <span style="color:#FFFFFF"><strong><u>H</u>uman <u>R</u>esource <u>M</u>anagement <u>S</u>ystem</strong></span>
-                </div>
-                <div class="panel mw320">
-
-                    {!! Form::open() !!}
-                        <div class="panel-body pn mv10">
-                                @if (session('message'))
-                                    <div class="alert {{session('class')}}">
-                                        {{ session('message') }}
-                                    </div>
-                                @endif
-                            <div class="section">
-                                <label for="username" class="field prepend-icon">
-                                    <input type="text" name="email" id="email" class="gui-input" placeholder="Email">
-                                    <label for="email" class="field-icon">
-                                        <i class="fa fa-user"></i>
-                                    </label>
-                                </label>
-                            </div>
-                            <!-- -------------- /section -------------- -->
-
-                            <div class="section">
-                                <label for="password" class="field prepend-icon">
-                                    <input type="password" name="password" id="password" class="gui-input" placeholder="Password">
-                                    <label for="password" class="field-icon">
-                                        <i class="fa fa-lock"></i>
-                                    </label>
-                                </label>
-                            </div>
-                            <!-- -------------- /section -------------- -->
-
-                            <div class="section">
-                                <div class="pull-left pt5">
-                                        <a href="/reset-password">Reset Password</a>
-                                </div>
-                                <button type="submit" class="btn btn-bordered btn-primary pull-right">Log in</button>
-                            </div>
-                            <!-- -------------- /section -------------- -->
-
-                        </div>
-                        <!-- -------------- /Form -------------- -->
-                    {!! Form::close() !!}
-                </div>
-                <!-- -------------- /Panel -------------- -->
+<body class="hold-transition login-page">
+<div class="login-box">
+  <!-- /.login-logo -->
+  <div class="card card-outline card-primary">
+    <div class="card-header text-center">
+      <a href="../../index2.html" class="h1">
+        <img src="{{ URL::asset('assets/img/ac-logo-horizontal-300.png') }}" style="background-position-y: center;background-size: contain;width: auto !important;" />
+      </a>
+    </div>
+    <div class="card-body">
+      <p class="login-box-msg">HRMS Admin Login</p>
+      {!! Form::open() !!}
+        @if (session('message'))
+          <div class="alert {{session('class')}}">
+              {{ session('message') }}
+          </div>
+        @endif
+        <div class="input-group mb-3">
+          <input name="email" id="email" type="email" class="form-control" placeholder="Email">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
             </div>
-            <!-- -------------- /Spec Form -------------- -->
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" name="password" id="password" class="form-control" placeholder="Password">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <div class="icheck-primary">
+              <input type="checkbox" id="remember">
+              <label for="remember">
+                Remember Me
+              </label>
+            </div>
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      {!! Form::close() !!}
 
-        </section>
-        <!-- -------------- /Content -------------- -->
+      <div class="social-auth-links text-center mt-2 mb-3">
+        <a href="#" class="btn btn-block btn-primary">
+          <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
+        </a>
+        <a href="#" class="btn btn-block btn-danger">
+          <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
+        </a>
+      </div>
+      <!-- /.social-auth-links -->
 
-    </section>
-    <!-- -------------- /Main Wrapper -------------- -->
-
+      <p class="mb-1">
+        <a href="forgot-password.html">I forgot my password</a>
+      </p>
+      <p class="mb-0" id="register">
+        <a href="#" class="text-center">Request an Account</a>
+      </p>
+    </div>
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
 </div>
-<!-- -------------- /Body Wrap  -------------- -->
+<!-- /.login-box -->
 
-<!-- -------------- Scripts -------------- -->
-
-<!-- -------------- jQuery -------------- -->
-<script src="/assets/js/jquery/jquery-1.11.3.min.js"></script>
-<script src="/assets/js/jquery/jquery_ui/jquery-ui.min.js"></script>
-
-<!-- -------------- CanvasBG JS -------------- -->
-<script src="/assets/js/plugins/canvasbg/canvasbg.js"></script>
-
-<!-- -------------- Theme Scripts -------------- -->
-<script src="/assets/js/utility/utility.js"></script>
-<script src="/assets/js/demo/demo.js"></script>
-<script src="/assets/js/main.js"></script>
-
-<!-- -------------- Page JS -------------- -->
-<script type="text/javascript">
-    jQuery(document).ready(function () {
-
-        "use strict";
-
-        // Init Theme Core
-        Core.init();
-
-        // Init Demo JS
-        Demo.init();
-
-        // Init CanvasBG
-        CanvasBG.init({
-            Loc: {
-                x: window.innerWidth / 5,
-                y: window.innerHeight / 10
-            }
-        });
-
-    });
-</script>
-
-<!-- -------------- /Scripts -------------- -->
-
+<!-- jQuery -->
+<script src="{{ URL::asset('assets/js/jquery/jquery.min.js') }}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ URL::asset('assets/bower/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{ URL::asset('assets/bower/js/adminlte.min.js') }}"></script>
 </body>
-
 </html>
