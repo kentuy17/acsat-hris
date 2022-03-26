@@ -27,7 +27,7 @@
         "symfony/translation": "~2.6 || ~3.0 || ~4.0"
     },
     "require-dev": {
-        "composer/composer": "^2.2",
+        "composer/composer": "^1.2",
         "friendsofphp/php-cs-fixer": "~2",
         "phpunit/phpunit": "^4.8.35 || ^5.7"
     },
@@ -42,10 +42,7 @@
         }
     },
     "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "kylekatarnls/update-helper": true
-        }
+        "sort-packages": true
     },
     "scripts": {
         "test": [

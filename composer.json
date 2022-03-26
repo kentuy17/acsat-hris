@@ -9,14 +9,15 @@
     "type": "project",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "^5.8.0",
-        "laravelcollective/html": "5.2.*",
         "doctrine/dbal": "^2.5",
         "maatwebsite/excel": "~2.0",
         "thestringler-laravel/manipulator": "^1.1",
-        "monolog/monolog": "^1.26",
-        "orangehill/iseed": "2.2",
-        "barryvdh/laravel-cors": "^0.7.3"
+        "monolog/monolog": "1.26",
+        "symfony/debug": "4.2",
+        "symfony/http-kernel": "4.2",
+        "laravel/framework": "5.8",
+        "laravelcollective/html": "*",
+        "guzzlehttp/guzzle": "^7.4"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -50,11 +51,13 @@
             "php artisan key:generate"
         ],
         "post-install-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postInstall",
+            "php artisan clear-compiled",
             "php artisan optimize"
         ],
+        "pre-update-cmd": [
+            "php artisan clear-compiled"
+        ],
         "post-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "php artisan optimize"
         ]
     },
