@@ -106,6 +106,12 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
+              <a href="{{route('lagsik')}}" class="nav-link">
+                <i class="fa-regular fa-alien nav-icon" style="margin-left:10px"></i>
+                <p>Lagsik</p>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="{{route('attendance-upload')}}" class="nav-link">
                 <i class="fa fa-upload nav-icon" style="margin-left:10px"></i>
                 <p>Upload Excel</p>

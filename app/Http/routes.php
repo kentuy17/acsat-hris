@@ -275,14 +275,6 @@ Route::group(['middleware' => ['auth']], function ()
 
     Route::get('delete-project-assignment/{id}', ['as' => 'delete-project-assignment', 'uses' => 'ProjectController@doDeleteAssign']);
 
-    Route::get('bower', function () { 
-        return view('hrms/layouts/starter');
-    });
-
-    Route::get('bower/login', function () { 
-        return view('hrms/auth/login');
-    });
-
     // dasbord
     Route::get('welcum', 'AuthController@welcum');
 
@@ -309,8 +301,16 @@ Route::group(['middleware' => ['auth']], function ()
     Route::get('add-holidays', ['as'=>'add-holidays', 'uses' => 'LeaveController@showHolidays']);
     Route::post('add-holidays', ['as'=>'add-holidays', 'uses' => 'LeaveController@insertHoliday']);
     Route::get('holiday-listing', ['as'=>'holiday-listing', 'uses' => 'LeaveController@showHoliday']);
-    // ------------
+    
 
+    // Route::get('lagsik', ['as' => 'lagsik', 'uses' => 'AttendanceController@getBiometricLogs']);
+    // Route::get('lagsik', ['as' => 'lagsik', 'uses' => 'AttendanceController@testAttendance']);
+    
+    /**
+     * TEST
+     */
+    Route::get('attendance/logs', 'AttendanceController@getBiometricLogs');
+    Route::get('attendance/logs-test', 'AttendanceController@getLogs');
     
 
     /**
