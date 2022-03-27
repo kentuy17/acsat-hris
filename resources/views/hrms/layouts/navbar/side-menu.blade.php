@@ -25,7 +25,39 @@
         </ul>
       </li>
 
+      <!-- ATTENDANCE -->
+      <li class="nav-item">
+          <a href="#" id="attendance" class="nav-link">
+            <i class="nav-icon fa fa-clock"></i>
+            <p>Attendance</p>
+            <i class="fas fa-angle-left right"></i>
+          </a>
+          <ul class="nav nav-treeview">
+            @if(\Auth::user()->isHR())
+            <li class="nav-item">
+              <a href="{{route('timesheet')}}" class="nav-link">
+                <i class="fa-regular fa-alien nav-icon" style="margin-left:10px"></i>
+                <p>Employee Timesheet</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('my-timesheet')}}" class="nav-link">
+                <i class="fa-regular fa-alien nav-icon" style="margin-left:10px"></i>
+                <p>My Timesheet</p>
+              </a>
+            </li>
+            @endif
+            <!-- <li class="nav-item">
+              <a href="{{route('attendance-upload')}}" class="nav-link">
+                <i class="fa fa-upload nav-icon" style="margin-left:10px"></i>
+                <p>Upload Excel</p>
+              </a>
+            </li> -->
+          </ul>
+        </li>
+
       <!-- ROLES -->
+      @if(\Auth::user()->isHR())
       <li class="nav-item">
         <a href="#" id="roles" class="nav-link">
           <i class="nav-icon fa fa-graduation-cap"></i>
@@ -47,6 +79,7 @@
           </li>
         </ul>
       </li>
+      @endif
 
       <!-- LEAVES -->
       <li class="nav-item">
@@ -97,23 +130,6 @@
 
       
       @if(Auth::user()->isHR())
-        <!-- ATTENDANCE -->
-        <li class="nav-item">
-          <a href="#" id="attendance" class="nav-link">
-            <i class="nav-icon fa fa-clock"></i>
-            <p>Attendance</p>
-            <i class="fas fa-angle-left right"></i>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{{route('attendance-upload')}}" class="nav-link">
-                <i class="fa fa-upload nav-icon" style="margin-left:10px"></i>
-                <p>Upload Excel</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-
         <!-- HOLIDAY -->
         <li class="nav-item">
           <a href="#" id="holiday" class="nav-link">
@@ -161,7 +177,7 @@
 
   <script>
     const MENUS = {
-      employees: ['add-employee', 'employee-manager', 'upload-emp'], 
+      employees: ['add-employee', 'employee-manager', 'upload-emp', 'list-employee'], 
       roles: ['add-role', 'role-list'], 
       assets: ['add-asset', 'asset-listing', 'assign-asset', 'assignment-listing'], 
       leaves: ['apply-leave', 'my-leave-list', 'add-leave-type', 'leave-type-listing', 'total-leave-list'],
@@ -173,15 +189,24 @@
       return "{{ Route::current()->getName() }}"
     }
 
+    const NO_NAV = ['welcom', 'dashboard']
+    
     const toggleOpen = (route) => {
-      console.log(route)
-      var nav = document.getElementById(route)
-      nav.classList.add("active")
+      var hasNav = NO_NAV.includes(route)
+      console.log(hasNav)
+
+      if(hasNav || route) {
+        console.log(route, 'route')
+        var nav = document.getElementById(route)
+        nav.classList.add("active")
+      }
+      
       Object.keys(MENUS).forEach(key => {
         if(MENUS[key].includes(route)){
           var element = document.getElementById(key).parentElement
-          console.log(element)
-          element.classList.add("menu-open")
+          if(hasNav || route){
+            element.classList.add("menu-open")
+          }
         }
       })
     }

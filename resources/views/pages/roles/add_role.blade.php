@@ -18,7 +18,7 @@
                 <div class="form-group row">
                   <!-- text input -->
                   <div class="col-md-3 control-label">
-                    <label class="float-right">User Role</label>
+                    <label class="float-left">User Role</label>
                   </div>
                   <div class="col-md-6">
                     <input type="text" class="form-control" name="role" id="role" placeholder="Add Role">
@@ -27,7 +27,7 @@
                 <!-- desc input -->
                 <div class="form-group row">
                   <div class="col-md-3 control-label">
-                    <label class="float-right">Description</label>
+                    <label class="float-left">Description</label>
                   </div>
                   <div class="col-md-6">
                     <textarea name="description" id="description" class="form-control" rows="3" placeholder="Description"></textarea>
@@ -94,4 +94,5 @@
 @push('styles')
   <link rel="stylesheet" href="{{ URL::asset('assets/bower/plugins/select2/css/select2.min.css') }}">
   <link rel="stylesheet" href="{{ URL::asset('assets/bower/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+  <style>label.float-left{ margin-left: 150px; }</style>
 @endpush

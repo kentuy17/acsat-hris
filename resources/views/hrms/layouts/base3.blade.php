@@ -55,7 +55,7 @@
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
           @if(\Auth::user()->employee->photo)
-            <img src="photos/{{\Auth::user()->employee->photo}}" class="img-circle elevation-2" alt="User Image">
+            <img src="{{\Auth::user()->employee->photo}}" class="img-circle elevation-2" alt="User Image">
           @else
             <img src="{{ URL::asset('assets/bower/img/not-set-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
           @endif

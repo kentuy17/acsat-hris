@@ -3,362 +3,415 @@
 namespace Orangehill\Iseed;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Config;
 
-class Iseed {
-	/**
-	 * Name of the database upon which the seed will be executed.
-	 *
-	 * @var string
-	 */
-	protected $databaseName;
+class Iseed
+{
+    /**
+     * Name of the database upon which the seed will be executed.
+     *
+     * @var string
+     */
+    protected $databaseName;
 
-	/**
-	 * New line character for seed files.
-	 * Double quotes are mandatory!
-	 *
-	 * @var string
-	 */
-	private $newLineCharacter = "\r\n";
+    /**
+     * New line character for seed files.
+     * Double quotes are mandatory!
+     *
+     * @var string
+     */
+    private $newLineCharacter = PHP_EOL;
 
-	/**
-	 * Desired indent for the code.
-	 * For tabulator use \t
-	 * Double quotes are mandatory!
-	 *
-	 * @var string
-	 */
-	private $indentCharacter = "    ";
+    /**
+     * Desired indent for the code.
+     * For tabulator use \t
+     * Double quotes are mandatory!
+     *
+     * @var string
+     */
+    private $indentCharacter = "    ";
 
-	public function __construct(Filesystem $filesystem = null) {
-		$this->files = $filesystem ?: new Filesystem;
-	}
+    /**
+     * @var Composer
+     */
+    private $composer;
 
-	/**
-	 * Generates a seed file.
-	 * @param  string   $table
-	 * @param  string   $database
-	 * @param  int      $max
-	 * @param  string   $prerunEvent
-	 * @param  string   $postunEvent
-	 * @return bool
-	 * @throws Orangehill\Iseed\TableNotFoundException
-	 */
-	public function generateSeed($table, $database = null, $max = 0, $prerunEvent = null, $postrunEvent = null) {
-		if (!$database) {
-			$database = config('database.default');
-		}
+    public function __construct(Filesystem $filesystem = null, Composer $composer = null)
+    {
+        $this->files = $filesystem ?: new Filesystem;
+        $this->composer = $composer ?: new Composer($this->files);
+    }
 
-		$this->databaseName = $database;
+    public function readStubFile($file)
+    {
+        $buffer = file($file, FILE_IGNORE_NEW_LINES);
+        return implode(PHP_EOL, $buffer);
+    }
 
-		// Check if table exists
-		if (!$this->hasTable($table)) {
-			throw new TableNotFoundException("Table $table was not found.");
-		}
+    /**
+     * Generates a seed file.
+     * @param  string   $table
+     * @param  string   $prefix
+     * @param  string   $suffix
+     * @param  string   $database
+     * @param  int      $max
+     * @param  string   $prerunEvent
+     * @param  string   $postunEvent
+     * @return bool
+     * @throws Orangehill\Iseed\TableNotFoundException
+     */
+    public function generateSeed($table, $prefix=null, $suffix=null, $database = null, $max = 0, $chunkSize = 0, $exclude = null, $prerunEvent = null, $postrunEvent = null, $dumpAuto = true, $indexed = true, $orderBy = null, $direction = 'ASC')
+    {
+        if (!$database) {
+            $database = config('database.default');
+        }
 
-		// Get the data
-		$data = $this->getData($table, $max);
+        $this->databaseName = $database;
 
-		// Repack the data
-		$dataArray = $this->repackSeedData($data);
+        // Check if table exists
+        if (!$this->hasTable($table)) {
+            throw new TableNotFoundException("Table $table was not found.");
+        }
 
-		// Generate class name
-		$className = $this->generateClassName($table);
+        // Get the data
+        $data = $this->getData($table, $max, $exclude, $orderBy, $direction);
 
-		// Get template for a seed file contents
-		$stub = $this->files->get($this->getStubPath() . '/seed.stub');
+        // Repack the data
+        $dataArray = $this->repackSeedData($data);
 
-		// Get a seed folder path
-		$seedPath = $this->getSeedPath();
+        // Generate class name
+        $className = $this->generateClassName($table, $prefix, $suffix);
 
-		// Get a app/database/seeds path
-		$seedsPath = $this->getPath($className, $seedPath);
+        // Get template for a seed file contents
+        $stub = $this->readStubFile($this->getStubPath() . '/seed.stub');
 
-		// Get a populated stub file
-		$seedContent = $this->populateStub(
-			$className,
-			$stub,
-			$table,
-			$dataArray,
-			null,
-			$prerunEvent,
-			$postrunEvent
-		);
+        // Get a seed folder path
+        $seedPath = $this->getSeedPath();
 
-		// Save a populated stub
-		$this->files->put($seedsPath, $seedContent);
+        // Get a app/database/seeds path
+        $seedsPath = $this->getPath($className, $seedPath);
 
-		// Update the DatabaseSeeder.php file
-		return $this->updateDatabaseSeederRunMethod($className) !== false;
-	}
+        // Get a populated stub file
+        $seedContent = $this->populateStub(
+            $className,
+            $stub,
+            $table,
+            $dataArray,
+            $chunkSize,
+            $prerunEvent,
+            $postrunEvent,
+            $indexed
+        );
 
-	/**
-	 * Get a seed folder path
-	 * @return string
-	 */
-	public function getSeedPath() {
-		return base_path() . config('iseed::config.path');
-	}
+        // Save a populated stub
+        $this->files->put($seedsPath, $seedContent);
 
-	/**
-	 * Get the Data
-	 * @param  string $table
-	 * @return Array
-	 */
-	public function getData($table, $max) {
-		if (!$max) {
-			return \DB::connection($this->databaseName)->table($table)->get();
-		}
+        // Run composer dump-auto
+        if ($dumpAuto) {
+            $this->composer->dumpAutoloads();
+        }
 
-		return \DB::connection($this->databaseName)->table($table)->limit($max)->get();
-	}
+        // Update the DatabaseSeeder.php file
+        return $this->updateDatabaseSeederRunMethod($className) !== false;
+    }
 
-	/**
-	 * Repacks data read from the database
-	 * @param  array|object $data
-	 * @return array
-	 */
-	public function repackSeedData($data) {
-		if (!is_array($data)) {
-			$data = $data->toArray();
-		}
-		$dataArray = array();
-		if (!empty($data)) {
-			foreach ($data as $row) {
-				$rowArray = array();
-				foreach ($row as $columnName => $columnValue) {
-					$rowArray[$columnName] = $columnValue;
-				}
-				$dataArray[] = $rowArray;
-			}
-		}
-		return $dataArray;
-	}
+    /**
+     * Get a seed folder path
+     * @return string
+     */
+    public function getSeedPath()
+    {
+        return base_path() . config('iseed::config.path');
+    }
 
-	/**
-	 * Checks if a database table exists
-	 * @param string $table
-	 * @return boolean
-	 */
-	public function hasTable($table) {
-		return \Schema::connection($this->databaseName)->hasTable($table);
-	}
+    /**
+     * Get the Data
+     * @param  string $table
+     * @return Array
+     */
+    public function getData($table, $max, $exclude = null, $orderBy = null, $direction = 'ASC')
+    {
+        $result = \DB::connection($this->databaseName)->table($table);
 
-	/**
-	 * Generates a seed class name (also used as a filename)
-	 * @param  string  $table
-	 * @return string
-	 */
-	public function generateClassName($table) {
-		$tableString = '';
-		$tableName = explode('_', $table);
-		foreach ($tableName as $tableNameExploded) {
-			$tableString .= ucfirst($tableNameExploded);
-		}
-		return ucfirst($tableString) . 'TableSeeder';
-	}
+        if (!empty($exclude)) {
+            $allColumns = \DB::connection($this->databaseName)->getSchemaBuilder()->getColumnListing($table);
+            $result = $result->select(array_diff($allColumns, $exclude));
+        }
 
-	/**
-	 * Get the path to the stub file.
-	 * @return string
-	 */
-	public function getStubPath() {
-		return __DIR__ . DIRECTORY_SEPARATOR . 'Stubs';
-	}
+        if($orderBy) {
+            $result = $result->orderBy($orderBy, $direction);
+        }
 
-	/**
-	 * Populate the place-holders in the seed stub.
-	 * @param  string   $class
-	 * @param  string   $stub
-	 * @param  string   $table
-	 * @param  string   $data
-	 * @param  int      $chunkSize
-	 * @param  string   $prerunEvent
-	 * @param  string   $postunEvent
-	 * @return string
-	 */
-	public function populateStub($class, $stub, $table, $data, $chunkSize = null, $prerunEvent = null, $postrunEvent = null) {
-		$chunkSize = $chunkSize ?: config('iseed::config.chunk_size');
-		$inserts = '';
-		$chunks = array_chunk($data, $chunkSize);
-		foreach ($chunks as $chunk) {
-			$this->addNewLines($inserts);
-			$this->addIndent($inserts, 2);
-			$inserts .= sprintf(
-				"\DB::table('%s')->insert(%s);",
-				$table,
-				$this->prettifyArray($chunk)
-			);
-		}
+        if ($max) {
+            $result = $result->limit($max);
+        }
 
-		$stub = str_replace('{{class}}', $class, $stub);
+        return $result->get();
+    }
 
-		$prerunEventInsert = '';
-		if ($prerunEvent) {
-			$prerunEventInsert .= "\$response = Event::until(new $prerunEvent());";
-			$this->addNewLines($prerunEventInsert);
-			$this->addIndent($prerunEventInsert, 2);
-			$prerunEventInsert .= 'if ($response === false) {';
-			$this->addNewLines($prerunEventInsert);
-			$this->addIndent($prerunEventInsert, 3);
-			$prerunEventInsert .= 'throw new Exception("Prerun event failed, seed wasn\'t executed!");';
-			$this->addNewLines($prerunEventInsert);
-			$this->addIndent($prerunEventInsert, 2);
-			$prerunEventInsert .= '}';
-		}
+    /**
+     * Repacks data read from the database
+     * @param  array|object $data
+     * @return array
+     */
+    public function repackSeedData($data)
+    {
+        if (!is_array($data)) {
+            $data = $data->toArray();
+        }
+        $dataArray = array();
+        if (!empty($data)) {
+            foreach ($data as $row) {
+                $rowArray = array();
+                foreach ($row as $columnName => $columnValue) {
+                    $rowArray[$columnName] = $columnValue;
+                }
+                $dataArray[] = $rowArray;
+            }
+        }
+        return $dataArray;
+    }
 
-		$stub = str_replace(
-			'{{prerun_event}}', $prerunEventInsert, $stub
-		);
+    /**
+     * Checks if a database table exists
+     * @param string $table
+     * @return boolean
+     */
+    public function hasTable($table)
+    {
+        return \Schema::connection($this->databaseName)->hasTable($table);
+    }
 
-		if (!is_null($table)) {
-			$stub = str_replace('{{table}}', $table, $stub);
-		}
+    /**
+     * Generates a seed class name (also used as a filename)
+     * @param  string  $table
+     * @param  string  $prefix
+     * @param  string  $suffix
+     * @return string
+     */
+    public function generateClassName($table, $prefix=null, $suffix=null)
+    {
+        $tableString = '';
+        $tableName = explode('_', $table);
+        foreach ($tableName as $tableNameExploded) {
+            $tableString .= ucfirst($tableNameExploded);
+        }
+        return ($prefix ? $prefix : '') . ucfirst($tableString) . 'Table' . ($suffix ? $suffix : '') . 'Seeder';
+    }
 
-		$postrunEventInsert = '';
-		if ($postrunEvent) {
-			$postrunEventInsert .= "\$response = Event::until(new $postrunEvent());";
-			$this->addNewLines($postrunEventInsert);
-			$this->addIndent($postrunEventInsert, 2);
-			$postrunEventInsert .= 'if ($response === false) {';
-			$this->addNewLines($postrunEventInsert);
-			$this->addIndent($postrunEventInsert, 3);
-			$postrunEventInsert .= 'throw new Exception("Seed was executed but the postrun event failed!");';
-			$this->addNewLines($postrunEventInsert);
-			$this->addIndent($postrunEventInsert, 2);
-			$postrunEventInsert .= '}';
-		}
+    /**
+     * Get the path to the stub file.
+     * @return string
+     */
+    public function getStubPath()
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . 'stubs';
+    }
 
-		$stub = str_replace(
-			'{{postrun_event}}', $postrunEventInsert, $stub
-		);
+    /**
+     * Populate the place-holders in the seed stub.
+     * @param  string   $class
+     * @param  string   $stub
+     * @param  string   $table
+     * @param  string   $data
+     * @param  int      $chunkSize
+     * @param  string   $prerunEvent
+     * @param  string   $postunEvent
+     * @return string
+     */
+    public function populateStub($class, $stub, $table, $data, $chunkSize = null, $prerunEvent = null, $postrunEvent = null, $indexed = true)
+    {
+        $chunkSize = $chunkSize ?: config('iseed::config.chunk_size');
 
-		$stub = str_replace('{{insert_statements}}', $inserts, $stub);
+        $inserts = '';
+        $chunks = array_chunk($data, $chunkSize);
+        foreach ($chunks as $chunk) {
+            $this->addNewLines($inserts);
+            $this->addIndent($inserts, 2);
+            $inserts .= sprintf(
+                "\DB::table('%s')->insert(%s);",
+                $table,
+                $this->prettifyArray($chunk, $indexed)
+            );
+        }
 
-		return $stub;
-	}
+        $stub = str_replace('{{class}}', $class, $stub);
 
-	/**
-	 * Create the full path name to the seed file.
-	 * @param  string  $name
-	 * @param  string  $path
-	 * @return string
-	 */
-	public function getPath($name, $path) {
-		return $path . '/' . $name . '.php';
-	}
+        $prerunEventInsert = '';
+        if ($prerunEvent) {
+            $prerunEventInsert .= "\$response = Event::until(new $prerunEvent());";
+            $this->addNewLines($prerunEventInsert);
+            $this->addIndent($prerunEventInsert, 2);
+            $prerunEventInsert .= 'if ($response === false) {';
+            $this->addNewLines($prerunEventInsert);
+            $this->addIndent($prerunEventInsert, 3);
+            $prerunEventInsert .= 'throw new Exception("Prerun event failed, seed wasn\'t executed!");';
+            $this->addNewLines($prerunEventInsert);
+            $this->addIndent($prerunEventInsert, 2);
+            $prerunEventInsert .= '}';
+        }
 
-	/**
-	 * Prettify a var_export of an array
-	 * @param  array  $array
-	 * @return string
-	 */
-	protected function prettifyArray($array) {
-		$content = var_export($array, true);
+        $stub = str_replace(
+            '{{prerun_event}}', $prerunEventInsert, $stub
+        );
 
-		$lines = explode("\n", $content);
+        if (!is_null($table)) {
+            $stub = str_replace('{{table}}', $table, $stub);
+        }
 
-		$inString = false;
-		$tabCount = 3;
-		for ($i = 1; $i < count($lines); $i++) {
-			$lines[$i] = ltrim($lines[$i]);
+        $postrunEventInsert = '';
+        if ($postrunEvent) {
+            $postrunEventInsert .= "\$response = Event::until(new $postrunEvent());";
+            $this->addNewLines($postrunEventInsert);
+            $this->addIndent($postrunEventInsert, 2);
+            $postrunEventInsert .= 'if ($response === false) {';
+            $this->addNewLines($postrunEventInsert);
+            $this->addIndent($postrunEventInsert, 3);
+            $postrunEventInsert .= 'throw new Exception("Seed was executed but the postrun event failed!");';
+            $this->addNewLines($postrunEventInsert);
+            $this->addIndent($postrunEventInsert, 2);
+            $postrunEventInsert .= '}';
+        }
 
-			//Check for closing bracket
-			if (strpos($lines[$i], ')') !== false) {
-				$tabCount--;
-			}
+        $stub = str_replace(
+            '{{postrun_event}}', $postrunEventInsert, $stub
+        );
 
-			//Insert tab count
-			if ($inString === false) {
-				for ($j = 0; $j < $tabCount; $j++) {
-					$lines[$i] = substr_replace($lines[$i], $this->indentCharacter, 0, 0);
-				}
-			}
+        $stub = str_replace('{{insert_statements}}', $inserts, $stub);
 
-			for ($j = 0; $j < strlen($lines[$i]); $j++) {
-				//skip character right after an escape \
-				if ($lines[$i][$j] == '\\') {
-					$j++;
-				}
-				//check string open/end
-				else if ($lines[$i][$j] == '\'') {
-					$inString = !$inString;
-				}
-			}
+        return $stub;
+    }
 
-			//check for openning bracket
-			if (strpos($lines[$i], '(') !== false) {
-				$tabCount++;
-			}
-		}
+    /**
+     * Create the full path name to the seed file.
+     * @param  string  $name
+     * @param  string  $path
+     * @return string
+     */
+    public function getPath($name, $path)
+    {
+        return $path . '/' . $name . '.php';
+    }
 
-		$content = implode("\n", $lines);
+    /**
+     * Prettify a var_export of an array
+     * @param  array  $array
+     * @return string
+     */
+    protected function prettifyArray($array, $indexed = true)
+    {
+        $content = ($indexed)
+            ? var_export($array, true)
+            : preg_replace("/[0-9]+ \=\>/i", '', var_export($array, true));
 
-		return $content;
-	}
+        $lines = explode("\n", $content);
 
-	/**
-	 * Adds new lines to the passed content variable reference.
-	 *
-	 * @param string    $content
-	 * @param int       $numberOfLines
-	 */
-	private function addNewLines(&$content, $numberOfLines = 1) {
-		while ($numberOfLines > 0) {
-			$content .= $this->newLineCharacter;
-			$numberOfLines--;
-		}
-	}
+        $inString = false;
+        $tabCount = 3;
+        for ($i = 1; $i < count($lines); $i++) {
+            $lines[$i] = ltrim($lines[$i]);
 
-	/**
-	 * Adds indentation to the passed content reference.
-	 *
-	 * @param string    $content
-	 * @param int       $numberOfIndents
-	 */
-	private function addIndent(&$content, $numberOfIndents = 1) {
-		while ($numberOfIndents > 0) {
-			$content .= $this->indentCharacter;
-			$numberOfIndents--;
-		}
-	}
+            //Check for closing bracket
+            if (strpos($lines[$i], ')') !== false) {
+                $tabCount--;
+            }
 
-	/**
-	 * Cleans the iSeed section
-	 * @return bool
-	 */
-	public function cleanSection() {
-		$databaseSeederPath = base_path() . config('iseed::config.path') . '/DatabaseSeeder.php';
+            //Insert tab count
+            if ($inString === false) {
+                for ($j = 0; $j < $tabCount; $j++) {
+                    $lines[$i] = substr_replace($lines[$i], $this->indentCharacter, 0, 0);
+                }
+            }
 
-		$content = $this->files->get($databaseSeederPath);
+            for ($j = 0; $j < strlen($lines[$i]); $j++) {
+                //skip character right after an escape \
+                if ($lines[$i][$j] == '\\') {
+                    $j++;
+                }
+                //check string open/end
+                else if ($lines[$i][$j] == '\'') {
+                    $inString = !$inString;
+                }
+            }
 
-		$content = preg_replace("/(\#iseed_start.+?)\#iseed_end/us", "#iseed_start\n\t\t#iseed_end", $content);
+            //check for openning bracket
+            if (strpos($lines[$i], '(') !== false) {
+                $tabCount++;
+            }
+        }
 
-		return $this->files->put($databaseSeederPath, $content) !== false;
-		return false;
-	}
+        $content = implode("\n", $lines);
 
-	/**
-	 * Updates the DatabaseSeeder file's run method (kudoz to: https://github.com/JeffreyWay/Laravel-4-Generators)
-	 * @param  string  $className
-	 * @return bool
-	 */
-	public function updateDatabaseSeederRunMethod($className) {
-		$databaseSeederPath = base_path() . config('iseed::config.path') . '/DatabaseSeeder.php';
+        return $content;
+    }
 
-		$content = $this->files->get($databaseSeederPath);
-		if (strpos($content, "\$this->call('{$className}')") === false) {
-			if (
-				strpos($content, '#iseed_start') &&
-				strpos($content, '#iseed_end') &&
-				strpos($content, '#iseed_start') < strpos($content, '#iseed_end')
-			) {
-				$content = preg_replace("/(\#iseed_start.+?)(\#iseed_end)/us", "$1\$this->call('{$className}');{$this->newLineCharacter}{$this->indentCharacter}{$this->indentCharacter}$2", $content);
-			} else {
-				$content = preg_replace("/(run\(\).+?)}/us", "$1{$this->indentCharacter}\$this->call('{$className}');{$this->newLineCharacter}{$this->indentCharacter}}", $content);
-			}
-		}
+    /**
+     * Adds new lines to the passed content variable reference.
+     *
+     * @param string    $content
+     * @param int       $numberOfLines
+     */
+    private function addNewLines(&$content, $numberOfLines = 1)
+    {
+        while ($numberOfLines > 0) {
+            $content .= $this->newLineCharacter;
+            $numberOfLines--;
+        }
+    }
 
-		return $this->files->put($databaseSeederPath, $content) !== false;
-	}
+    /**
+     * Adds indentation to the passed content reference.
+     *
+     * @param string    $content
+     * @param int       $numberOfIndents
+     */
+    private function addIndent(&$content, $numberOfIndents = 1)
+    {
+        while ($numberOfIndents > 0) {
+            $content .= $this->indentCharacter;
+            $numberOfIndents--;
+        }
+    }
+
+    /**
+     * Cleans the iSeed section
+     * @return bool
+     */
+    public function cleanSection()
+    {
+        $databaseSeederPath = base_path() . config('iseed::config.path') . '/DatabaseSeeder.php';
+
+        $content = $this->files->get($databaseSeederPath);
+
+        $content = preg_replace("/(\#iseed_start.+?)\#iseed_end/us", "#iseed_start\n\t\t#iseed_end", $content);
+
+        return $this->files->put($databaseSeederPath, $content) !== false;
+        return false;
+    }
+
+    /**
+     * Updates the DatabaseSeeder file's run method (kudoz to: https://github.com/JeffreyWay/Laravel-4-Generators)
+     * @param  string  $className
+     * @return bool
+     */
+    public function updateDatabaseSeederRunMethod($className)
+    {
+        $databaseSeederPath = base_path() . config('iseed::config.path') . '/DatabaseSeeder.php';
+
+        $content = $this->files->get($databaseSeederPath);
+        if (strpos($content, "\$this->call({$className}::class)") === false) {
+            if (
+                strpos($content, '#iseed_start') &&
+                strpos($content, '#iseed_end') &&
+                strpos($content, '#iseed_start') < strpos($content, '#iseed_end')
+            ) {
+                $content = preg_replace("/(\#iseed_start.+?)(\#iseed_end)/us", "$1\$this->call({$className}::class);{$this->newLineCharacter}{$this->indentCharacter}{$this->indentCharacter}$2", $content);
+            } else {
+                $content = preg_replace("/(run\(\).+?)}/us", "$1{$this->indentCharacter}\$this->call({$className}::class);{$this->newLineCharacter}{$this->indentCharacter}}", $content);
+            }
+        }
+
+        return $this->files->put($databaseSeederPath, $content) !== false;
+    }
 }

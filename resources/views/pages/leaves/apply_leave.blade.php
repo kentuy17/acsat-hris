@@ -18,7 +18,7 @@
                 <div class="form-group row">
                   <!-- text input -->
                   <div class="col-md-3 control-label">
-                    <label class="float-right">Type</label>
+                    <label class="float-left">Type</label>
                   </div>
                   <div class="col-md-6">
                     <select class="form-control select2bs4" name="leave_type" id="leave_type" style="width: 100%;" required>
@@ -32,7 +32,7 @@
                 <!-- desc input -->
                 <div class="form-group row">
                   <div class="col-md-3 control-label">
-                    <label class="float-right">Reason</label>
+                    <label class="float-left">Reason</label>
                   </div>
                   <div class="col-md-6">
                     <textarea name="reason" id="reason" class="form-control" rows="3"></textarea>
@@ -41,7 +41,7 @@
                 <!-- desc Range -->
                 <div class="form-group row">
                   <div class="col-md-3 control-label">
-                    <label class="float-right">From</label>
+                    <label class="float-left">From</label>
                   </div>
                   <!-- sample -->
                   <div class="input-group col-md-6">
@@ -54,7 +54,7 @@
                 </div>
                 <div class="form-group row">
                   <div class="col-md-3 control-label">
-                    <label class="float-right">To</label>
+                    <label class="float-left">To</label>
                   </div>
                   <div class="input-group col-md-6">
                     <div class="input-group-prepend">
@@ -126,4 +126,5 @@ document.getElementById("submit").addEventListener("click", function(){
 @push('styles')
   <link rel="stylesheet" href="{{ URL::asset('assets/bower/plugins/select2/css/select2.min.css') }}">
   <link rel="stylesheet" href="{{ URL::asset('assets/bower/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+  <style>label.float-left{ margin-left: 200px; }</style>
 @endpush

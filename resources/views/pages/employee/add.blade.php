@@ -3,7 +3,7 @@
 @section('content')
 <div class="content">
   <div class="container-fluid">
-    <form method="post" action="/add-employee-tmp">
+    <form method="post" action="/add-employee">
     <div class="row">
       <!-- Form -->
       

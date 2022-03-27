@@ -8,7 +8,7 @@
       <!-- Form -->
       
         <div class="col-md-12">
-          <div class="card card-primary">
+          <div class="card card-default">
             <div class="card-header">
             <h3 class="card-title"> Roles</h3>
             </div>
@@ -86,7 +86,7 @@
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,
-      "searching": false,
+      "searching": true,
       "ordering": true,
       "info": true,
       "autoWidth": false,

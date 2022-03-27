@@ -4,9 +4,11 @@
 
   use App\Models\AttendanceManager;
   use App\Models\AttendanceFilename;
+  use App\Models\BiometricLogs;
   use App\Repositories\ExportRepository;
   use App\Repositories\ImportAttendanceData;
   use App\Repositories\UploadRepository;
+  use GuzzleHttp\Client;
 
   use Illuminate\Http\Request;
   use Illuminate\Support\Facades\Input;
@@ -30,6 +32,43 @@
       $this->upload = $uploadRepository;
       $this->attendanceData = $attendanceData;
     }
+
+    public function pretty($data)
+    {
+      if(is_array($data) || is_object($data)){
+        return response()->json($data);
+      }
+      
+      if(json_decode($data, true) !== null){
+        return json_decode($data, true);
+      }
+    }
+
+    public function getBiometricLogs()
+    {
+      $client = new Client(['base_uri' => 'http://hrms-acsat.rf.gd/']);
+      $response = $client->request('GET', '/fetch_logs.php');
+      return json_decode($response->getBody(), true);
+      // return $response->getBody();
+      // return response()->json($data);
+      // return response()->json( $response );
+    }
+
+    public function myTimeshit()
+    {
+      $shit = BiometricLogs::where('userid', \Auth::user()->employee->biometric_id)->get();
+      return $this->pretty($shit);
+      
+
+      // $team = Team::where('member_id', \Auth::user()->employee->id)->first();
+    }
+
+    public function getLogs()
+    {
+      $json = json_decode(file_get_contents('http://hrms-acsat.rf.gd/fetch_logs.php'), true);
+      echo $json;
+    }
+
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View

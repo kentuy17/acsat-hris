@@ -48,28 +48,6 @@ Route::group(['middleware' => ['auth']], function ()
 
     Route::get('profile', 'ProfileController@show');
 
-    //Routes for add-employees
-
-    Route::get('add-employee', ['as' => 'add-employee', 'uses' => 'EmpController@addEmployee']);
-    
-    Route::get('list-employee', ['as' => 'list-employee', 'uses' => 'EmpController@showEmployee']);
-
-    Route::post('add-employee', ['as' => 'add-employee', 'uses' => 'EmpController@processEmployee']);
-
-    Route::get('employee-manager', ['as' => 'employee-manager', 'uses' => 'EmpController@showEmployee']);
-
-    Route::post('employee-manager', 'EmpController@searchEmployee');
-
-    Route::get('upload-emp', ['as' => 'upload-emp', 'uses' => 'EmpController@importFile']);
-
-    Route::post('upload-emp', ['as' => 'upload-emp', 'uses' => 'EmpController@uploadFile']);
-
-    Route::get('edit-emp/{id}', ['as' => 'edit-emp', 'uses' => 'EmpController@showEdit']);
-
-    Route::post('edit-emp/{id}', ['as' => 'edit-emp', 'uses' => 'EmpController@doEdit']);
-
-    Route::get('delete-emp/{id}', ['as' => 'delete-emp', 'uses' => 'EmpController@doDelete']);
-
     //Routes for Bank Account details
 
     Route::get('bank-account-details', ['uses' => 'EmpController@showDetails']);
@@ -297,19 +275,13 @@ Route::group(['middleware' => ['auth']], function ()
 
     Route::get('delete-project-assignment/{id}', ['as' => 'delete-project-assignment', 'uses' => 'ProjectController@doDeleteAssign']);
 
-    Route::get('bower', function () { 
-        return view('hrms/layouts/starter');
-    });
-
-    Route::get('bower/login', function () { 
-        return view('hrms/auth/login');
-    });
-
+    // dasbord
     Route::get('welcum', 'AuthController@welcum');
-    Route::get('add-employee-tmp', 'EmpController@addEmployeeTmp');
-    Route::post('add-employee-tmp', ['as' => 'add-employee-tmp', 'uses' => 'EmpController@processEmployeeTmp']);
-    Route::get('list-employee-tmp', ['as' => 'list-employee-tmp', 'uses' => 'EmpController@showEmployeeTmp']);
-    Route::get('list-employee-tmp', ['as' => 'list-employee-tmp', 'uses' => 'EmpController@showEmployeeTmp']);
+
+    // employees
+    Route::get('add-employee', ['as' => 'add-employee', 'uses' => 'EmpController@addEmployee']);
+    Route::post('add-employee', ['as' => 'add-employee', 'uses' => 'EmpController@processEmployee']);
+    Route::get('list-employee', ['as' => 'list-employee', 'uses' => 'EmpController@showEmployee']);
 
     // roles
     Route::get('add-role', ['as' => 'add-role', 'uses' => 'RoleController@addRole']);
@@ -329,27 +301,42 @@ Route::group(['middleware' => ['auth']], function ()
     Route::get('add-holidays', ['as'=>'add-holidays', 'uses' => 'LeaveController@showHolidays']);
     Route::post('add-holidays', ['as'=>'add-holidays', 'uses' => 'LeaveController@insertHoliday']);
     Route::get('holiday-listing', ['as'=>'holiday-listing', 'uses' => 'LeaveController@showHoliday']);
-    // ------------
     
 
+    // Route::get('lagsik', ['as' => 'lagsik', 'uses' => 'AttendanceController@getBiometricLogs']);
+    // Route::get('lagsik', ['as' => 'lagsik', 'uses' => 'AttendanceController@testAttendance']);
+    
+    /**
+     * TEST
+     */
+    Route::get('timesheet', ['as' => 'timesheet', 'uses' => 'AttendanceController@getBiometricLogs']);
+    Route::get('my-timesheet', ['as' => 'my-timesheet', 'uses' => 'AttendanceController@myTimeshit']);
+    Route::get('attendance/logs-test', 'AttendanceController@getLogs');
     
 
-    Route::get('edit-holiday/{id}', 'LeaveController@showEditHoliday');
-
-    Route::post('edit-holiday/{id}', 'LeaveController@doEditHoliday');
-
-    Route::get('delete-holiday/{id}', 'LeaveController@deleteHoliday');
-
-
-
-
-    // TODO LATERS
+    /**
+     * TODO LATERS
+     */
     Route::get('edit-leave-type/{id}', ['as' => 'edit-leave-type', 'uses' => 'LeaveController@showEdit']);
     Route::post('edit-leave-type/{id}', ['as' => 'edit-leave-type', 'uses' => 'LeaveController@doEdit']);
     Route::get('delete-leave-type/{id}', ['as' => 'delete-leave-type', 'uses' => 'LeaveController@doDelete']);
     Route::post('total-leave-list', 'LeaveController@searchLeave');
     Route::get('leave-drafting', ['as' => 'leave-drafting', 'uses' => 'LeaveController@showLeaveDraft']);
     Route::post('leave-drafting', ['as' => 'leave-drafting', 'uses' => 'LeaveController@createLeaveDraft']);
+    
+    // emp
+    Route::get('employee-manager', ['as' => 'employee-manager', 'uses' => 'EmpController@showEmployee']);
+    Route::post('employee-manager', 'EmpController@searchEmployee');
+    Route::get('upload-emp', ['as' => 'upload-emp', 'uses' => 'EmpController@importFile']);
+    Route::post('upload-emp', ['as' => 'upload-emp', 'uses' => 'EmpController@uploadFile']);
+    Route::get('edit-emp/{id}', ['as' => 'edit-emp', 'uses' => 'EmpController@showEdit']);
+    Route::post('edit-emp/{id}', ['as' => 'edit-emp', 'uses' => 'EmpController@doEdit']);
+    Route::get('delete-emp/{id}', ['as' => 'delete-emp', 'uses' => 'EmpController@doDelete']);
+
+    // holiday
+    Route::get('edit-holiday/{id}', 'LeaveController@showEditHoliday');
+    Route::post('edit-holiday/{id}', 'LeaveController@doEditHoliday');
+    Route::get('delete-holiday/{id}', 'LeaveController@deleteHoliday');
 
 
 });
