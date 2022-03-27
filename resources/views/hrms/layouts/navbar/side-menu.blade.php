@@ -158,14 +158,16 @@
       <li class="nav-header">MISC</li>
       <!-- Downloadable forms -->
       <li class="nav-item">
-        <a href="/download-forms" class="nav-link">
+        <!-- <a href="/download-forms" class="nav-link"> -->
+        <a href="#" class="nav-link">
           <i class="fa fa-file-excel nav-icon" style="margin-left:10px"></i>
           <p>Download Forms</p>
         </a>
       </li>
       <!-- policy -->
       <li class="nav-item">
-        <a href="/hr-policy" class="nav-link">
+        <!-- <a href="/hr-policy" class="nav-link"> -->
+        <a href="#" class="nav-link">
         <i class="fa fa-file-pdf nav-icon" style="margin-left:10px"></i>
           <p>HR Policy</p>
         </a>
