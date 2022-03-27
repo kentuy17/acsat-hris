@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '80a9681e4920345ffad7bdf8a457090b023a47f0',
+        'reference' => '7d4cc1b27255980b9cb85f48b5cad32ec053599d',
         'name' => 'laravel/laravel',
         'dev' => true,
     ),
@@ -364,7 +364,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '80a9681e4920345ffad7bdf8a457090b023a47f0',
+            'reference' => '7d4cc1b27255980b9cb85f48b5cad32ec053599d',
             'dev_requirement' => false,
         ),
         'laravelcollective/html' => array(
@@ -446,6 +446,15 @@
             'install_path' => __DIR__ . '/../opis/closure',
             'aliases' => array(),
             'reference' => '3d81e4309d2a927abbe66df935f4bb60082805ad',
+            'dev_requirement' => false,
+        ),
+        'orangehill/iseed' => array(
+            'pretty_version' => 'v3.0.2',
+            'version' => '3.0.2.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../orangehill/iseed',
+            'aliases' => array(),
+            'reference' => '11f4355cdffc570eb231259f8700d760215df3fe',
             'dev_requirement' => false,
         ),
         'paragonie/random_compat' => array(

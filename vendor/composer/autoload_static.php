@@ -426,6 +426,13 @@ class ComposerStaticInitbbd016ecd36d2c7d90e45ed16b61adb4
                 0 => __DIR__ . '/..' . '/phpoffice/phpexcel/Classes',
             ),
         ),
+        'O' => 
+        array (
+            'Orangehill\\Iseed' => 
+            array (
+                0 => __DIR__ . '/..' . '/orangehill/iseed/src',
+            ),
+        ),
         'M' => 
         array (
             'Mockery' => 
@@ -447,6 +454,7 @@ class ComposerStaticInitbbd016ecd36d2c7d90e45ed16b61adb4
         'App\\Models\\AttendanceFilename' => __DIR__ . '/../..' . '/app/Models/AttendanceFilename.php',
         'App\\Models\\AttendanceManager' => __DIR__ . '/../..' . '/app/Models/AttendanceManager.php',
         'App\\Models\\AttendanceUpload' => __DIR__ . '/../..' . '/app/Models/AttendanceUpload.php',
+        'App\\Models\\BiometricLogs' => __DIR__ . '/../..' . '/app/Models/BiometricLogs.php',
         'App\\Models\\Client' => __DIR__ . '/../..' . '/app/Models/Client.php',
         'App\\Models\\Employee' => __DIR__ . '/../..' . '/app/Models/Employee.php',
         'App\\Models\\Event' => __DIR__ . '/../..' . '/app/Models/Event.php',
@@ -607,6 +615,7 @@ class ComposerStaticInitbbd016ecd36d2c7d90e45ed16b61adb4
         'Maatwebsite\\Excel\\Writers\\CellWriter' => __DIR__ . '/..' . '/maatwebsite/excel/src/Maatwebsite/Excel/Writers/CellWriter.php',
         'Maatwebsite\\Excel\\Writers\\LaravelExcelWriter' => __DIR__ . '/..' . '/maatwebsite/excel/src/Maatwebsite/Excel/Writers/LaravelExcelWriter.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
+        'Orangehill\\Iseed\\TableNotFoundException' => __DIR__ . '/..' . '/orangehill/iseed/src/Orangehill/Iseed/Exceptions.php',
         'PHPUnit\\Framework\\Assert' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/Assert.php',
         'PHPUnit\\Framework\\AssertionFailedError' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/AssertionFailedError.php',
         'PHPUnit\\Framework\\BaseTestListener' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/BaseTestListener.php',

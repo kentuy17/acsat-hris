@@ -25,7 +25,39 @@
         </ul>
       </li>
 
+      <!-- ATTENDANCE -->
+      <li class="nav-item">
+          <a href="#" id="attendance" class="nav-link">
+            <i class="nav-icon fa fa-clock"></i>
+            <p>Attendance</p>
+            <i class="fas fa-angle-left right"></i>
+          </a>
+          <ul class="nav nav-treeview">
+            @if(\Auth::user()->isHR())
+            <li class="nav-item">
+              <a href="{{route('timesheet')}}" class="nav-link">
+                <i class="fa-regular fa-alien nav-icon" style="margin-left:10px"></i>
+                <p>Employee Timesheet</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('my-timesheet')}}" class="nav-link">
+                <i class="fa-regular fa-alien nav-icon" style="margin-left:10px"></i>
+                <p>My Timesheet</p>
+              </a>
+            </li>
+            @endif
+            <!-- <li class="nav-item">
+              <a href="{{route('attendance-upload')}}" class="nav-link">
+                <i class="fa fa-upload nav-icon" style="margin-left:10px"></i>
+                <p>Upload Excel</p>
+              </a>
+            </li> -->
+          </ul>
+        </li>
+
       <!-- ROLES -->
+      @if(\Auth::user()->isHR())
       <li class="nav-item">
         <a href="#" id="roles" class="nav-link">
           <i class="nav-icon fa fa-graduation-cap"></i>
@@ -47,6 +79,7 @@
           </li>
         </ul>
       </li>
+      @endif
 
       <!-- LEAVES -->
       <li class="nav-item">
@@ -97,29 +130,6 @@
 
       
       @if(Auth::user()->isHR())
-        <!-- ATTENDANCE -->
-        <li class="nav-item">
-          <a href="#" id="attendance" class="nav-link">
-            <i class="nav-icon fa fa-clock"></i>
-            <p>Attendance</p>
-            <i class="fas fa-angle-left right"></i>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{{route('lagsik')}}" class="nav-link">
-                <i class="fa-regular fa-alien nav-icon" style="margin-left:10px"></i>
-                <p>Lagsik</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{route('attendance-upload')}}" class="nav-link">
-                <i class="fa fa-upload nav-icon" style="margin-left:10px"></i>
-                <p>Upload Excel</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-
         <!-- HOLIDAY -->
         <li class="nav-item">
           <a href="#" id="holiday" class="nav-link">

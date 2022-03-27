@@ -309,7 +309,8 @@ Route::group(['middleware' => ['auth']], function ()
     /**
      * TEST
      */
-    Route::get('attendance/logs', 'AttendanceController@getBiometricLogs');
+    Route::get('timesheet', ['as' => 'timesheet', 'uses' => 'AttendanceController@getBiometricLogs']);
+    Route::get('my-timesheet', ['as' => 'my-timesheet', 'uses' => 'AttendanceController@myTimeshit']);
     Route::get('attendance/logs-test', 'AttendanceController@getLogs');
     
 
