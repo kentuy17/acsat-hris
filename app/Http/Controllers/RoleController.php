@@ -29,8 +29,8 @@ class RoleController extends Controller
         $role->save();
         \Session::flash('flash_message', 'Role successfully added!');
 
-        $roles = Roll::get();
-        return view('hrms.roles.list', compact('roles'));
+        $roles = Role::get();
+        return view('pages.roles.list', compact('roles'));
     }
 
     // public function showRole()
