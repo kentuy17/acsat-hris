@@ -538,6 +538,13 @@ class EmpController extends Controller
         return view('hrms.employee.show_bank_detail', compact('emps'));
     }
 
+    public function viewProfile(Request $request)
+    {
+        $emp = Employee::with('user.role.role')->find($request->id);
+        // return response()->json($emp);
+        return view('pages.employee.profile', compact('emp'));
+    }
+
     public function updateAccountDetail(Request $request)
     {
         try {

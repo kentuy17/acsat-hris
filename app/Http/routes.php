@@ -282,6 +282,7 @@ Route::group(['middleware' => ['auth']], function ()
     Route::get('add-employee', ['as' => 'add-employee', 'uses' => 'EmpController@addEmployee']);
     Route::post('add-employee', ['as' => 'add-employee', 'uses' => 'EmpController@processEmployee']);
     Route::get('list-employee', ['as' => 'list-employee', 'uses' => 'EmpController@showEmployee']);
+    Route::get('employee/{id}', ['as' => 'employee.view', 'uses' => 'EmpController@viewProfile']);
 
     // roles
     Route::get('add-role', ['as' => 'add-role', 'uses' => 'RoleController@addRole']);
