@@ -8,7 +8,7 @@
         <div class="col-lg-3 col-6">
           <div class="small-box bg-info">
             <div class="inner">
-              <h3>150</h3>
+              <h3>{{$emp}}</h3>
 
               <p>Employee Count</p>
             </div>
@@ -34,8 +34,7 @@
         <div class="col-lg-3 col-6">
           <div class="small-box bg-warning">
             <div class="inner">
-              <h3>21</h3>
-
+              <h3>{{ $user }}</h3>
               <p>User Registrations</p>
             </div>
             <div class="icon">
@@ -47,9 +46,8 @@
         <div class="col-lg-3 col-6">
           <div class="small-box bg-danger">
             <div class="inner">
-              <h3>65</h3>
-
-              <p>Unique Visitors</p>
+              <h3>{{$attendance}}</h3>
+              <p>Attendance Logs for this month</p>
             </div>
             <div class="icon">
               <i class="ion ion-pie-graph"></i>

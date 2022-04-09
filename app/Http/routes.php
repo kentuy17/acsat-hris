@@ -32,7 +32,7 @@ Route::group(['middleware' => ['guest']], function ()
 Route::group(['middleware' => ['auth']], function ()
 {
 
-    Route::get('home', 'HomeController@index');
+    Route::get('home', 'AuthController@welcome');
 
     Route::get('change-password', 'AuthController@changePassword');
 
@@ -311,6 +311,7 @@ Route::group(['middleware' => ['auth']], function ()
      */
     Route::get('timesheet', ['as' => 'timesheet', 'uses' => 'AttendanceController@getBiometricLogs']);
     Route::get('my-timesheet', ['as' => 'my-timesheet', 'uses' => 'AttendanceController@myTimeshit']);
+    Route::get('attendance/logs', ['as' => 'employee.getAttendance', 'uses' => 'AttendanceController@allTimeshit']);
     Route::get('attendance/logs-test', 'AttendanceController@getLogs');
     
 

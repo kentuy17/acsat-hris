@@ -35,14 +35,14 @@
           <ul class="nav nav-treeview">
             @if(\Auth::user()->isHR())
             <li class="nav-item">
-              <a href="{{route('timesheet')}}" class="nav-link">
-                <i class="fa-regular fa-alien nav-icon" style="margin-left:10px"></i>
+              <a href="{{route('timesheet')}}" id="timesheet" class="nav-link">
+                <i class="fa fa-calendar nav-icon" style="margin-left:10px"></i>
                 <p>Employee Timesheet</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{route('my-timesheet')}}" class="nav-link">
-                <i class="fa-regular fa-alien nav-icon" style="margin-left:10px"></i>
+              <a href="{{route('timesheet')}}" id="timesheet" class="nav-link">
+                <i class="fa fa-calendar-alt nav-icon" style="margin-left:10px"></i>
                 <p>My Timesheet</p>
               </a>
             </li>
@@ -181,7 +181,7 @@
       roles: ['add-role', 'role-list'], 
       assets: ['add-asset', 'asset-listing', 'assign-asset', 'assignment-listing'], 
       leaves: ['apply-leave', 'my-leave-list', 'add-leave-type', 'leave-type-listing', 'total-leave-list'],
-      attendance: ['attendance-upload'],
+      attendance: ['attendance-upload', 'timesheet'],
       holiday: ['add-holidays', 'holiday-listing',]
     }
 

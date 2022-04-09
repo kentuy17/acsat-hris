@@ -22,4 +22,9 @@ class Employee extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function biometricLogs()
+    {
+        return $this->hasMany('App\Models\BiometricLogs', 'biometric_id', 'user_id');
+    }
+
 }

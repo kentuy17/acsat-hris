@@ -33,7 +33,7 @@
       </a>
     </div>
     <div class="card-body">
-      <p class="login-box-msg">HRMS Admin Login</p>
+      <h2 class="login-box-msg">HRMS Admin Login</h2>
       {!! Form::open() !!}
         @if (session('message'))
           <div class="alert {{session('class')}}">
@@ -73,14 +73,14 @@
         </div>
       {!! Form::close() !!}
 
-      <div class="social-auth-links text-center mt-2 mb-3">
+      <!-- <div class="social-auth-links text-center mt-2 mb-3">
         <a href="#" class="btn btn-block btn-primary">
           <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
         </a>
         <a href="#" class="btn btn-block btn-danger">
           <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
         </a>
-      </div>
+      </div> -->
       <!-- /.social-auth-links -->
 
       <p class="mb-1">
