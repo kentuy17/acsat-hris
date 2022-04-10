@@ -124,7 +124,7 @@ class EmpController extends Controller
       $filename = public_path('photos/a.png');
       if ($request->file('photo')) {
           $file             = $request->file('photo');
-          $filename         = str_random(12);
+          $filename         = Str::rand(12);
           $fileExt          = $file->getClientOriginalExtension();
           $allowedExtension = ['jpg', 'jpeg', 'png'];
           $destinationPath  = public_path('photos');
@@ -493,8 +493,7 @@ class EmpController extends Controller
             foreach ($emps as $emp) {
                 $file->fputcsv([
                     $emp->id,
-                    (
-                        $emp->employee->photo) ? $emp->employee->photo : 'Not available',
+                    $emp->employee->photo ? $emp->employee->photo : 'Not available',
                     $emp->employee->code,
                     $emp->employee->name,
                     $emp->employee->status,
@@ -545,6 +544,26 @@ class EmpController extends Controller
         return view('pages.employee.profile', compact('emp'));
     }
 
+    public function editProfile(Request $request)
+    {
+        // $id = $request->route('id');
+        // $id = '1';
+        // return response()->json($id);
+        $emp = Employee::with('user')->find($request->emp_id);
+        $emp->name = $request->name;
+        $emp->number = $request->number;
+        $emp->current_address = $request->current_address;
+        $emp->permanent_address = $request->permanent_address;
+        $emp->user->email = $request->email;
+        $emp->push();
+
+        // $user = User::where('employee.id', $request->emp_id);
+        return response()->json($request);
+        /**
+         * { name: "HR Manager", email: "email@gmail.com", number: "9999999999", current_address: "Looc", permanent_address: "Cadawinonan" }
+         */
+    }
+
     public function updateAccountDetail(Request $request)
     {
         try {
@@ -559,7 +578,6 @@ class EmpController extends Controller
             \Log::info($e->getMessage() . ' on ' . $e->getLine() . ' in ' . $e->getFile());
             return json_encode('failed');
         }
-
     }
 
     public function doPromotion()

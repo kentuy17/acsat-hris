@@ -66,10 +66,10 @@ class AuthController extends Controller
 
   public function dashboard()
   {
-    $events   = $this->convertToArray(Event::where('date', '>', Carbon::now())->orderBy('date', 'desc')->take(3)->get());
-    $meetings = $this->convertToArray(Meeting::where('date', '>', Carbon::now())->orderBy('date', 'desc')->take(3)->get());
-
-    return view('hrms.auth.welcum', compact('events', 'meetings'));
+    $emp = Employee::count();
+    $user = User::count();
+    $attendance = BiometricLogs::count();
+    return view('hrms.auth.welcum', compact('emp','user','attendance'));
   }
 
   public function welcome()

@@ -283,6 +283,7 @@ Route::group(['middleware' => ['auth']], function ()
     Route::post('add-employee', ['as' => 'add-employee', 'uses' => 'EmpController@processEmployee']);
     Route::get('list-employee', ['as' => 'list-employee', 'uses' => 'EmpController@showEmployee']);
     Route::get('employee/{id}', ['as' => 'employee.view', 'uses' => 'EmpController@viewProfile']);
+    Route::post('edit-employee', 'EmpController@editProfile');
 
     // roles
     Route::get('add-role', ['as' => 'add-role', 'uses' => 'RoleController@addRole']);
@@ -297,11 +298,26 @@ Route::group(['middleware' => ['auth']], function ()
     Route::post('add-leave-type', ['as' => 'add-leave-type', 'uses' => 'LeaveController@processLeaveType']);
     Route::get('leave-type-listing', ['as' => 'leave-type-listing', 'uses' => 'LeaveController@showLeaveType']);
     Route::get('total-leave-list', ['as' => 'total-leave-list', 'uses' => 'LeaveController@showAllLeave']);
+    Route::get('leave-for-approval', ['as' => 'leave-for-approval', 'uses' => 'LeaveController@leaveForApproval']);
+    Route::get('leave-approved', ['as' => 'leave-approved', 'uses' => 'LeaveController@leaveApproved']);
+    
     
     // holiday
     Route::get('add-holidays', ['as'=>'add-holidays', 'uses' => 'LeaveController@showHolidays']);
     Route::post('add-holidays', ['as'=>'add-holidays', 'uses' => 'LeaveController@insertHoliday']);
     Route::get('holiday-listing', ['as'=>'holiday-listing', 'uses' => 'LeaveController@showHoliday']);
+
+    // api
+    Route::get('get-api/{id}', ['as'=>'get-api', 'uses' => 'APIController@getGuzzleRequest']);
+    Route::get('api/employee/{id}', ['as' => 'get-employee-api', 'uses' => 'APIController@getEmployee']);
+    Route::post('api/employee/{id}', ['as' => 'get-employee-api', 'uses' => 'APIController@insertLog']);
+
+    Route::post('store', 'APIController@store');
+    Route::get('api/index', 'APIController@api');
+    Route::get('post','APIController@postRequest');
+    Route::get('get','APIController@getRequest');
+    Route::post('api/{id}','APIController@store');
+    Route::get('log/{id}','APIController@store');
     
 
     // Route::get('lagsik', ['as' => 'lagsik', 'uses' => 'AttendanceController@getBiometricLogs']);

@@ -13,7 +13,7 @@
       </ol>
     </nav> -->
     <!-- /Breadcrumb -->
-
+    <form method="POST" action="/edit-employee">
     <div class="row gutters-sm">
       <div class="col-md-4 mb-3">
         <div class="card">
@@ -24,15 +24,14 @@
                 <h4>{{$emp->name}}</h4>
                 <p class="text-secondary mb-1">{{$emp->user->role->role->name}}</p>
                 <p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p>
-                <button class="btn btn-primary">Follow</button>
-                <button class="btn btn-outline-primary">Message</button>
+                <a href="#" class="btn btn-primary">Follow</a>
+                <a href="#" class="btn btn-outline-primary">Message</a>
               </div>
             </div>
           </div>
         </div>
         <div class="card mt-3">
           <ul class="list-group list-group-flush">
-            <!-- <a href="https://cdnlogo.com/logo/friendster_60620.html"><img src="https://cdn.cdnlogo.com/logos/f/67/friendster.svg"></a> -->
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
               <h6 class="mb-0"><svg xmlns="https://cdn.cdnlogo.com/logos/f/67/friendster.svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe mr-2 icon-inline"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>Friendster</h6>
               <span class="text-secondary">https://friendster.com</span>
@@ -68,7 +67,7 @@
                 <h6 class="mb-0">Full Name</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="text" id="name" value="{{$emp->name}}" class="no-border">
+                <input type="text" id="name" value="{{$emp->name}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
@@ -77,7 +76,7 @@
                 <h6 class="mb-0">Email</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="text" id="email" value="{{$emp->user->email}}" class="no-border">
+                <input type="text" id="email" value="{{$emp->user->email}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
@@ -86,7 +85,7 @@
                 <h6 class="mb-0">Phone</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="text" id="number" value="{{$emp->number}}" class="no-border">
+                <input type="text" id="number" value="{{$emp->number}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
@@ -95,7 +94,7 @@
                 <h6 class="mb-0">Current Address</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="text" id="current_address" value="{{$emp->current_address}}" class="no-border">
+                <input type="text" id="current_address" value="{{$emp->current_address}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
@@ -104,12 +103,14 @@
                 <h6 class="mb-0">Permanent Address</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="text" id="permanent_address" value="{{$emp->permanent_address}}" class="no-border">
+                <input type="text" id="permanent_address" value="{{$emp->permanent_address}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
             <div class="row">
               <div class="col-sm-12">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                <input type="hidden" id="emp_id" value="{{ request()->id }} ">
                 <button type="button" onclick="toggleButton()" id="edit_info" style="display:block" class="btn btn-info btn-sm"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
                 <button type="button" onclick="toggleButton()" id="save_info" style="display:none" class="btn btn-info btn-sm"><i class="fas fa-save" aria-hidden="true"></i> Save</button>
               </div>
@@ -173,12 +174,10 @@
             </div>
           </div>
         </div>
-
-
-
       </div>
+      
     </div>
-
+    </form>
   </div>
 </div>
 @endsection
@@ -209,35 +208,43 @@
 
 @section('jsfunction')
 <script>
+  function toggleButton() {
+    var id = this.window.event.srcElement.id
+    var show = id == 'edit_info' ? '#save_info' : '#edit_info'
+    document.getElementById(id).style.display = 'none'
+    $(show)[0].style.display = 'block'
+  } 
 
-
-function toggleButton() {
-  var id = this.window.event.srcElement.id
-  var show = id == 'edit_info' ? '#save_info' : '#edit_info'
-  document.getElementById(id).style.display = 'none'
-  $(show)[0].style.display = 'block'
-} 
-
-$(document).on('click', '#edit_info', function(){
-  var childDivs = document.querySelectorAll('#master_card input')
-  var data = {}
-  childDivs.forEach((i) => {
-    i.removeAttribute('disabled','')
-    data[i.id] = i.value
+  $(document).on('click', '#edit_info', function(){
+    var childDivs = document.querySelectorAll('#master_card input')
+    var data = {}
+    childDivs.forEach((i) => {
+      i.removeAttribute('disabled','')
+      data[i.id] = i.value
+    })
+    childDivs[0].focus()
   })
-  childDivs[0].focus()
-  console.log(data)
-})
 
-$(document).on('click', '#save_info', function(){
-  var childDivs = document.querySelectorAll('#master_card input')
-  var data = {}
-  childDivs.forEach((i) => {
-    i.setAttribute('disabled','')
-    data[i.id] = i.value
+  $(document).on('click', '#save_info', function(){
+    event.preventDefault();
+    var childDivs = document.querySelectorAll('#master_card input')
+    var data = {}
+    childDivs.forEach((i) => {
+      i.setAttribute('disabled','')
+      data[i.id] = i.value
+    })
+    $.ajax({
+      headers: {
+       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      type: 'POST',
+      data: data,
+      url: '/edit-employee',
+      success: function(res) {
+        alert('Info Updated.')
+      }
+    })
   })
-  console.log(data)
-})
 </script>
 @endsection
 

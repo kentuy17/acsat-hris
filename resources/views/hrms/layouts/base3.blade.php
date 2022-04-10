@@ -3,8 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <!-- <title> Human Resource Management System </title> -->
-  <title> HRMS </title>
+  <!-- <title> HRMS </title> -->
+  <title>BrainPod</title>
 
 
   <!-- Google Font: Source Sans Pro -->
@@ -14,6 +16,7 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ URL::asset('assets/bower/css/adminlte.min.css') }}">
   <link rel="icon" href="cropped-favicon-512-192x192.png?x55520" sizes="192x192" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/regular.min.css" integrity="sha512-YoxvmIzlVlt4nYJ6QwBqDzFc+2aXL7yQwkAuscf2ZAg7daNQxlgQHV+LLRHnRXFWPHRvXhJuBBjQqHAqRFkcVw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     #logo {
       background-position-y: center;

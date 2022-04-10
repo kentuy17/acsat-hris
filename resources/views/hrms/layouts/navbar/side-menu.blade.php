@@ -96,30 +96,36 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{route('my-leave-list')}}" id="my-leave-list" class="nav-link">
-              <i class="fa fa-list nav-icon" style="margin-left:10px"></i>
-              <p>My Leave List</p>
+            <a href="{{route('leave-for-approval')}}" id="leave-for-approval" class="nav-link">
+              <i class="fa fa-regular fa-clipboard nav-icon" style="margin-left:10px"></i>
+              <p>to be approved Leave</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{route('leave-approved')}}" id="leave-approved" class="nav-link">
+            <i class="fa fa-regular fa-calendar-check nav-icon" style="margin-left:10px"></i>
+              <p>Approved Leave</p>
             </a>
           </li>
           <!-- For HR -->
           @if(\Auth::user()->isHR())
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a href="{{route('add-leave-type')}}" id="add-leave-type" class="nav-link">
               <i class="fa fa-plus nav-icon" style="margin-left:10px"></i>
                 <p>Add Leave Type</p>
               </a>
-            </li>
+            </li> -->
             <li class="nav-item">
-              <a href="{{route('leave-type-listing')}}" class="nav-link">
+              <a href="{{route('leave-type-listing')}}" id="leave-type-listing" class="nav-link">
               <i class="fa fa-calendar-alt nav-icon" style="margin-left:10px"></i>
-                <p>Leave Types</p>
+                <p>Types of Leave</p>
               </a>
             </li>
           @endif
           <!-- HR or Coordinator -->
           @if(Auth::user()->isHR() || Auth::user()->isCoordinator())
             <li class="nav-item">
-              <a href="{{route('total-leave-list')}}" class="nav-link">
+              <a href="{{route('total-leave-list')}}" id="total-leave-list" class="nav-link">
               <i class="fa fa-list-alt nav-icon" style="margin-left:10px"></i>
                 <p>Total Leave Lists</p>
               </a>
@@ -180,7 +186,7 @@
       employees: ['add-employee', 'employee-manager', 'upload-emp', 'list-employee'], 
       roles: ['add-role', 'role-list'], 
       assets: ['add-asset', 'asset-listing', 'assign-asset', 'assignment-listing'], 
-      leaves: ['apply-leave', 'my-leave-list', 'add-leave-type', 'leave-type-listing', 'total-leave-list'],
+      leaves: ['apply-leave', 'leave-for-approval', 'add-leave-type', 'leave-type-listing', 'leave-approved'],
       attendance: ['attendance-upload', 'timesheet'],
       holiday: ['add-holidays', 'holiday-listing',]
     }
