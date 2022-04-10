@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <!-- <title> Human Resource Management System </title> -->
+  <title> Human Resource Management System </title>
   <!-- <title> HRMS </title> -->
-  <title>BrainPod</title>
+  <!-- <title>BrainPod</title> -->
 
 
   <!-- Google Font: Source Sans Pro -->
