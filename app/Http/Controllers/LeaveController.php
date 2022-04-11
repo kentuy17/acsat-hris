@@ -193,12 +193,31 @@
         ->where('user_id', \Auth::user()->id)
         ->get();
 
-      $leave_status = array('For Approval', 'Approved', 'Rejected');
-
       return view(
         'pages.leaves.my_leave_list', 
         compact('leaves', 'leave_status')
       );
+    }
+
+    public function leaveForApproval()
+    {
+      $leaves = $this->getLeaveByStatus('1');
+      return view('pages.leaves.leave_for_approval', compact('leaves'));
+    }
+
+    public function leaveApproved()
+    {
+      $leaves = $this->getLeaveByStatus('2');
+      return view('pages.leaves.leave_approved', compact('leaves'));
+    }
+
+    public function getLeaveByStatus($status)
+    {
+      $leaves = EmployeeLeaves::with('leaveStatus')
+        ->where('status', $status)
+        ->get();
+
+      return $leaves;
     }
 
 

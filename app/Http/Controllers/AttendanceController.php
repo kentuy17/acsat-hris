@@ -5,6 +5,7 @@
   use App\Models\AttendanceManager;
   use App\Models\AttendanceFilename;
   use App\Models\BiometricLogs;
+  use App\Models\Employee;
   use App\Repositories\ExportRepository;
   use App\Repositories\ImportAttendanceData;
   use App\Repositories\UploadRepository;
@@ -46,12 +47,24 @@
 
     public function getBiometricLogs()
     {
-      $client = new Client(['base_uri' => 'http://hrms-acsat.rf.gd/']);
-      $response = $client->request('GET', '/fetch_logs.php');
-      return json_decode($response->getBody(), true);
+      // $client = new Client(['base_uri' => 'http://hrms-acsat.rf.gd/']);
+      // $response = $client->request('GET', '/fetch_logs.php');
+      // return json_decode($response->getBody(), true);
       // return $response->getBody();
       // return response()->json($data);
       // return response()->json( $response );
+      return view('pages.attendance.list_attendance');
+    }
+
+    public function allTimeshit(Request $request)
+    {
+      $logs = BiometricLogs::has('employee')
+        ->with('employee')
+        ->get();
+      return [
+        'data' => $logs,
+        'length' => count($logs)
+      ];
     }
 
     public function myTimeshit()
