@@ -72,14 +72,15 @@
                     <div class="form-group">
                       <label for="gender">Sex</label>
                       <select class="select2-single form-control" name="gender" id="gender">
-                        <option value="">Select sex</option>
+                        <option selected disabled value="">Select sex</option>
                         <option value="0">Male</option>
                         <option value="1">Female</option>
+                        <option value="2">Undecided</option>
                       </select>
                     </div>
                     
                     <div class="form-group">
-                      <label>Date</label>
+                      <label>Date of Birth</label>
                       <input type="date" class="form-control" id="dob" name="dob">
                       <!-- <div class="input-group date" id="reservationdate" data-target-input="nearest">
                           <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>

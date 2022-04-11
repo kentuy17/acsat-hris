@@ -76,11 +76,11 @@
       // $team = Team::where('member_id', \Auth::user()->employee->id)->first();
     }
 
-    public function getLogs()
-    {
-      $json = json_decode(file_get_contents('http://hrms-acsat.rf.gd/fetch_logs.php'), true);
-      echo $json;
-    }
+    // public function getLogs()
+    // {
+    //   $json = json_decode(file_get_contents('http://hrms-acsat.rf.gd/fetch_logs.php'), true);
+    //   echo $json;
+    // }
 
 
     /**

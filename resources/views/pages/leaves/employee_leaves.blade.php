@@ -20,22 +20,21 @@
                     <th>Date From</th>
                     <th>Date To</th>
                     <th>Days</th>
-                    <th>Remarks</th>
+                    <th>Reason</th>
                     <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   @foreach($leaves as $item)
-                  <?php $typus = gettype($item->user); ?>
                   <tr>
                     <td>{{$item->user->name}} </td>
                     <td>{{$item->user->employee->code}} </td>
-                    <td>{{(isset($post))? $leave->leave_type : getLeaveType($item->leave_type_id)}}</td>
+                    <td>{{$item->leaveType->leave_type}}</td>
                     <td>{{$item->date_from}} </td>
                     <td>{{$item->date_to}} </td>
                     <td>{{$item->days}} </td>
                     <td>{{$item->remarks}} </td>
-                    <td>{{$status[$item->status]}} </td>
+                    <td>{{$item->leaveStatus->name}} </td>
                   </tr>
                   @endforeach
                 </tbody>

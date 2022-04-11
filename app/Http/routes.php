@@ -146,9 +146,6 @@ Route::group(['middleware' => ['auth']], function ()
 
     Route::post('get-leave-count', 'LeaveController@getLeaveCount');
 
-    Route::post('approve-leave', 'LeaveController@approveLeave');
-
-    Route::post('disapprove-leave', 'LeaveController@disapproveLeave');
 
     //Routes for Event.
 
@@ -300,6 +297,9 @@ Route::group(['middleware' => ['auth']], function ()
     Route::get('total-leave-list', ['as' => 'total-leave-list', 'uses' => 'LeaveController@showAllLeave']);
     Route::get('leave-for-approval', ['as' => 'leave-for-approval', 'uses' => 'LeaveController@leaveForApproval']);
     Route::get('leave-approved', ['as' => 'leave-approved', 'uses' => 'LeaveController@leaveApproved']);
+    Route::post('approve-leave', 'LeaveController@doApprove');
+    // Route::post('approve-leave', 'LeaveController@approveLeave');
+    // Route::post('disapprove-leave', 'LeaveController@disapproveLeave');
     
     
     // holiday

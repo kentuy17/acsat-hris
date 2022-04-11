@@ -73,13 +73,7 @@ class EmpController extends Controller
       $emp->user_id     = $user->id;
       $emp->save();
 
-      $new_user = User::where([
-          'name' => $request->emp_name,
-          'password' => str_replace(' ', '_', $request->emp_name) . '@acsat.ph'
-        ])->first();
-
-      $this->fireLogger($new_user);
-      return;
+      $new_user = User::orderBy('id','desc')->first();
 
       $userRole          = new UserRole();
       $userRole->role_id = $request->role;
@@ -88,18 +82,12 @@ class EmpController extends Controller
       $emp->userrole()->create(['role_id' => $request->role]);
 
       // return json_encode(['title' => 'Success', 'message' => 'Employee added successfully', 'class' => 'modal-header-success']);
-      return view('pages.employee.list', compact('roles'));
+      $employees  = User::with('employee', 'role.role')->get();
+      return view('pages.employee.list', compact('employees'));
     }
 
     public function showEmployee(){
-      $logger = new Logger('my_logger');
-      // Now add some handlers
-      $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Logger::DEBUG));
-      $logger->pushHandler(new FirePHPHandler());
-
-      $employees  = User::with('employee', 'role.role')->paginate(15);
-      $logger->info(json_encode($employees));
-
+      $employees  = User::with('employee', 'role.role')->get();
       return view('pages.employee.list', compact('employees'));
     }
 
@@ -551,7 +539,7 @@ class EmpController extends Controller
         // return response()->json($id);
         $emp = Employee::with('user')->find($request->emp_id);
         $emp->name = $request->name;
-        $emp->number = $request->number;
+        $emp->biometric_id = $request->biometric_id;
         $emp->current_address = $request->current_address;
         $emp->permanent_address = $request->permanent_address;
         $emp->user->email = $request->email;

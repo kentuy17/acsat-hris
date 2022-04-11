@@ -164,16 +164,14 @@
       <li class="nav-header">MISC</li>
       <!-- Downloadable forms -->
       <li class="nav-item">
-        <!-- <a href="/download-forms" class="nav-link"> -->
-        <a href="#" class="nav-link">
+        <a href="/download-forms" class="nav-link">
           <i class="fa fa-file-excel nav-icon" style="margin-left:10px"></i>
           <p>Download Forms</p>
         </a>
       </li>
       <!-- policy -->
       <li class="nav-item">
-        <!-- <a href="/hr-policy" class="nav-link"> -->
-        <a href="#" class="nav-link">
+        <a href="/hr-policy" class="nav-link">
         <i class="fa fa-file-pdf nav-icon" style="margin-left:10px"></i>
           <p>HR Policy</p>
         </a>
@@ -188,7 +186,7 @@
       employees: ['add-employee', 'employee-manager', 'upload-emp', 'list-employee'], 
       roles: ['add-role', 'role-list'], 
       assets: ['add-asset', 'asset-listing', 'assign-asset', 'assignment-listing'], 
-      leaves: ['apply-leave', 'leave-for-approval', 'add-leave-type', 'leave-type-listing', 'leave-approved'],
+      leaves: ['apply-leave', 'leave-for-approval', 'add-leave-type', 'leave-type-listing', 'leave-approved', 'total-leave-list'],
       attendance: ['attendance-upload', 'timesheet'],
       holiday: ['add-holidays', 'holiday-listing',]
     }

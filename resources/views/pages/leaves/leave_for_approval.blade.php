@@ -16,12 +16,13 @@
               <table id="example2" class="table table-bordered table-hover">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>Employee</th>
+                    <th>Code</th>
                     <th>Leave</th>
-                    <th>Reason</th>
                     <th>From</th>
                     <th>To</th>
                     <th>Day/s</th>
+                    <th>Reason</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
@@ -29,20 +30,22 @@
                 <tbody>
                   @foreach($leaves as $leave)
                   <tr>
-                    <td>{{$leave->id}}</td>
+                    <td>{{$leave->employee->name}}</td>
+                    <td>{{$leave->employee->code}}</td>
                     <td>{{$leave->leaveType->leave_type}}</td>
-                    <td>{{$leave->remarks}}</td>
                     <td>{{$leave->date_from}}</td>
                     <td>{{$leave->date_to}}</td>
                     <td>{{$leave->days}}</td>
+                    <td>{{$leave->reason}}</td>
                     <td>{{$leave->leaveStatus->name}}</td>
                     <td>
-                      <button class="btn btn-primary btn-sm" id="approve"><i class="fas fa-check"></i> </button> | 
-                      <button class="btn btn-danger btn-sm" id="reject"><i class="fas fa-trash"></i> </button>
+                      <button data-id="{{ $leave->id }}" class="btn btn-primary btn-sm" id="approve"><i class="fas fa-check"></i> </button> | 
+                      <button data-id="{{ $leave->id }}" class="btn btn-danger btn-sm" id="reject"><i class="fas fa-trash"></i> </button>
                     </td>
                   </tr>
                   @endforeach
                 </tbody>
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
               </table>
             </div>
             <!-- /.card-body -->
@@ -89,7 +92,8 @@
     $("#example1").DataTable({
       "responsive": true, "lengthChange": false, "autoWidth": false,
       "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)')
+
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,
@@ -98,8 +102,25 @@
       "info": true,
       "autoWidth": true,
       "responsive": true,
-    });
-  });
+    })
+  })
+
+  $(document).on('click', '#approve', function() {
+    var id = $(this).data("id")
+    $.ajax({
+      headers: {
+       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      type: 'POST',
+      url: '/approve-leave',
+      data: {id: id},
+      success: function(resp) {
+        response = JSON.parse(resp)
+        alert(response.msg)
+      }
+    })
+    $(this).closest('tr').remove()
+  })
 </script>
 @endsection
 

@@ -16,7 +16,26 @@
             <div class="card-body p25 p10">
               <form method="post" action="/apply-leave" class="form-horizontal">
                 <div class="form-group row">
+                  @if (session('message'))
+                    <div class="alert {{session('class')}}">
+                        {{ session('message') }}
+                    </div>
+                  @endif
                   <!-- text input -->
+                  <div class="col-md-3 control-label">
+                    <label class="float-left">Emp</label>
+                  </div>
+                  <div class="col-md-6">
+                    <select class="form-control select2bs4" name="emp_id" id="emp_id" style="width: 100%;" required>
+                      <option selected value="" disabled>Select</option>
+                      @foreach($employees as $employee)
+                        <option value="{{$employee->id}}">{{$employee->name}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <!-- select -->
                   <div class="col-md-3 control-label">
                     <label class="float-left">Type</label>
                   </div>

@@ -107,7 +107,7 @@
       ],
       "dom": 'Bfrtip',
       "responsive": true,
-      "lengthChange": false, 
+      "lengthChange": true, 
       "autoWidth": false,
       "buttons": ["csv", "excel"],
     })

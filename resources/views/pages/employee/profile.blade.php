@@ -82,10 +82,10 @@
             <hr>
             <div class="row">
               <div class="col-sm-3">
-                <h6 class="mb-0">Phone</h6>
+                <h6 class="mb-0">Biometric ID</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="text" id="number" value="{{$emp->number}}" class="no-border" disabled>
+                <input type="biometric_id" id="biometric_id" value="{{$emp->biometric_id}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
@@ -190,7 +190,7 @@
 @section('crumbs')
   <div class="col-sm-6">
     <ol class="breadcrumb float-sm-right">
-    <a href="list-employee"><i style="margin-right: 30px; size:20px;" class="fa fa-2xl fa-arrow-left" aria-hidden="true"></i></a>  
+    <a href="{{route('list-employee')}}"><i style="margin-right: 30px; size:20px;" class="fa fa-2xl fa-arrow-left" aria-hidden="true"></i></a>  
       <li class="breadcrumb-item">
         <a ref="{{route('list-employee')}}">
           List

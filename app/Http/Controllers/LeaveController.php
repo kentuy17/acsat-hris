@@ -49,6 +49,8 @@
       $leave = new LeaveType;
       $leave->leave_type = $request->leave_type;
       $leave->description = $request->description;
+      $leave->remarks = $request->description;
+      $leave->status = '1';
       $leave->save();
 
       \Session::flash('flash_message', 'Leave Type successfully added!');
@@ -114,7 +116,8 @@
      */
     public function doApply(){
       $leaves = LeaveType::get();
-      return view('pages.leaves.apply_leave', compact('leaves'));
+      $employees = Employee::where('status','1')->get();
+      return view('pages.leaves.apply_leave', compact('leaves','employees'));
     }
 
     public function fileLogger($data){
@@ -149,13 +152,13 @@
         $emails[] = ['email' => $teamLead->user->email, 'name' => $teamLead->user->name];
       }
 
-      $leave->user_id = \Auth::user()->id;
-      // $leave->user_id = 7;
+      $leave->user_id = $request->emp_id;
+      $leave->emp_id = $request->emp_id;
       $leave->date_from = date_format(date_create($request->date_from), 'Y-m-d');
       $leave->date_to = date_format(date_create($request->date_to), 'Y-m-d');
       $leave->reason = $request->reason;
       $leave->days = $number_of_days;
-      $leave->status = '0';
+      $leave->status = '1';
       $leave->leave_type_id = $request->leave_type;
       $leave->save();
 
@@ -189,7 +192,7 @@
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showMyLeave(){
-      $leaves = EmployeeLeaves::with('leaveType')
+      $leaves = EmployeeLeaves::with('leaveType','leaveStatus')
         ->where('user_id', \Auth::user()->id)
         ->get();
 
@@ -213,21 +216,20 @@
 
     public function getLeaveByStatus($status)
     {
-      $leaves = EmployeeLeaves::with('leaveStatus')
+      $leaves = EmployeeLeaves::with('leaveStatus','leaveType','employee')
         ->where('status', $status)
         ->get();
 
       return $leaves;
     }
 
-
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showAllLeave(){
-      $leaves = EmployeeLeaves::with('user.employee')->get();
-      $status = array('Pending', 'Approved', 'Rejected');
-      
+    public function showAllLeave()
+    {
+      $leaves = EmployeeLeaves::with('leaveType','leaveStatus')->get();
+
       if(!\Auth::user()->isHR()){
         $leaves = EmployeeLeaves::with('user.employee')
           ->where('tl_id', \Auth::user()->id)
@@ -235,8 +237,16 @@
           ->get();
       }
       
-      $this->fileLogger($leaves);
-      return view('pages.leaves.employee_leaves', compact('leaves', 'status'));
+      return view('pages.leaves.employee_leaves', compact('leaves'));
+    }
+
+    public function doApprove(Request $request)
+    {
+      $approve = EmployeeLeaves::find($request->id);
+      $approve->status = 2;
+      $approve->push();
+
+      return json_encode(['status'=>'success', 'msg'=>'Leave approved']);
     }
 
     /**
@@ -264,7 +274,7 @@
       return redirect()->back();
     }
 
-    function wordsToNumber($data)
+    public function wordsToNumber($data)
     {
       // Replace all number words with an equivalent numeric value
       $data = strtr(
