@@ -1,4 +1,4 @@
 /node_modules
 /storage/*.key
-/vendor
-.env
+/vendor/
+!/vendor/laravel/framework/src/Illuminate/FoundationPackageManifest.php
