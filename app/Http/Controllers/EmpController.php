@@ -9,8 +9,11 @@ use App\Models\UserRole;
 use App\Promotion;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 use App\Http\Requests;
 use Illuminate\Support\Facades\Input;
@@ -36,64 +39,62 @@ class EmpController extends Controller
       return view('pages.employee.add', compact('roles'));
     }
 
-    public function addEmployeeTmp(){
-      $roles = Role::get();
-      return view('hrms.employee.add', compact('roles'));
+    private function handleImage(Request $request)
+    {
+        $imageName = 'assets\\bower\\img\\default-v2.jpg';
+        if ($request->photo) {
+            $imageName = Str::random(10) . '.' . $request->photo->extension();
+            $request->photo->move(public_path('img'), $imageName);
+        }
+        return $imageName;
     }
 
-    public function processEmployee(Request $request){
-      $filename = public_path('assets\\bower\\img\\default-v2.jpg');
-      if ($request->file('photo')) {
-        $file = $request->file('photo');
-        $filename = str_random(12);
-        $fileExt = $file->getClientOriginalExtension();
-        $allowedExtension = ['jpg', 'jpeg', 'png'];
-        $destinationPath = public_path('photos');
-        if (!in_array($fileExt, $allowedExtension)) {
-          return redirect()->back()->with('message', 'File not allowed');
+    public function processEmployee(Request $request)
+    {
+        try {
+            $user = User::create([
+                'name' => $request->emp_name,
+                'email' => str_replace(' ', '_', $request->emp_name) . '@acsat.ph',
+                'password' => bcrypt('123456')
+            ]);
+         
+            Employee::create([
+                'photo' => $this->handleImage($request),
+                'name' => $request->emp_name,
+                'code' => $request->emp_code,
+                'status'=> $request->emp_status,
+                'gender'=> $request->gender,
+                'department' => $request->department,
+                'salary' => $request->salary,
+                'user_id' => $user->id
+            ]);
+
+            UserRole::create([
+                'role_id' => $request->role,
+                'user_id' => $user->id,
+            ]);
+        } catch (\Throwable $th) {
+            // Session::flash('alert-warning', 'warning');
+            // Session::flash('alert-success', 'success');
+            // Session::flash('alert-info', 'info');
+            Session::flash('alert-danger', $th->getMessage());
+            return back();
         }
-        $filename = $filename . '.' . $fileExt;
-        $file->move($destinationPath, $filename);
-      }
 
-      $user           = new User;
-      $user->name     = $request->emp_name;
-      $user->email    = str_replace(' ', '_', $request->emp_name) . '@acsat.ph';
-      $user->password = bcrypt('123456');
-      $user->save();
-
-      $emp              = new Employee;
-      $emp->photo       = $filename;
-      $emp->name        = $request->emp_name;
-      $emp->code        = $request->emp_code;
-      $emp->status      = $request->emp_status;
-      $emp->gender      = $request->gender;
-      $emp->department  = $request->department;
-      $emp->salary      = $request->salary;
-      $emp->user_id     = $user->id;
-      $emp->save();
-
-      $new_user = User::orderBy('id','desc')->first();
-
-      $userRole          = new UserRole();
-      $userRole->role_id = $request->role;
-      $userRole->user_id = $new_user->id;
-      $userRole->save();
-      $emp->userrole()->create(['role_id' => $request->role]);
-
-      // return json_encode(['title' => 'Success', 'message' => 'Employee added successfully', 'class' => 'modal-header-success']);
-      $employees  = User::with('employee', 'role.role')->get();
-      return view('pages.employee.list', compact('employees'));
+        Session::flash('alert-success', "Successfully Added Employee!");
+        $employees  = User::with('employee', 'role.role')->get();
+        return view('pages.employee.list', compact('employees'));
     }
 
     public function showEmployee(){
-      $employees  = User::with('employee', 'role.role')->get();
+    //   $employees  = User::with('employee')->get();
+      $employees  = User::with('employee')->get();
+    //   return response()->json($employees);
       return view('pages.employee.list', compact('employees'));
     }
 
     public function showEmployeeOrig(){
       $emps   = User::with('employee', 'role.role')->paginate(15);
-      $fuck = 'fuck';
       $column = '';
       $string = '';
 
@@ -256,12 +257,10 @@ class EmpController extends Controller
 
     public function doDelete($id)
     {
-
         $emp = Employee::find($id);
         $emp->delete();
 
-        \Session::flash('flash_message', 'Employee successfully Deleted!');
-
+        Session::flash('alert-success', "Successfully Deleted Employee!");
         return redirect()->back();
     }
 
@@ -527,7 +526,7 @@ class EmpController extends Controller
 
     public function viewProfile(Request $request)
     {
-        $emp = Employee::with('user.role.role')->find($request->id);
+        $emp = User::with('role.role','employee')->find($request->id);
         // return response()->json($emp);
         return view('pages.employee.profile', compact('emp'));
     }

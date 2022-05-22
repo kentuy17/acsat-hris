@@ -18,7 +18,9 @@
         "laravel/framework": "5.8",
         "laravelcollective/html": "*",
         "guzzlehttp/guzzle": "^7.4",
-        "orangehill/iseed": "^3.0"
+        "orangehill/iseed": "^3.0",
+        "opis/closure": "^3.6",
+        "laravel/tinker": "*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -52,10 +54,12 @@
             "php artisan key:generate"
         ],
         "post-install-cmd": [
+            "php -r \"copy('storage/app/PackageManifest.php', 'vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php');\"",
             "php artisan clear-compiled",
             "php artisan optimize"
         ],
         "pre-update-cmd": [
+            "php -r \"copy('storage/app/PackageManifest.php', 'vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php');\"",
             "php artisan clear-compiled"
         ],
         "post-update-cmd": [

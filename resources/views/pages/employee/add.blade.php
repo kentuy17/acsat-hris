@@ -3,10 +3,9 @@
 @section('content')
 <div class="content">
   <div class="container-fluid">
-    <form method="post" action="/add-employee">
+    <form method="post" action="/add-employee" enctype="multipart/form-data">
     <div class="row">
       <!-- Form -->
-      
         <div class="col-md-12">
           <div class="card card-default">
             <div class="card-header">
@@ -34,20 +33,20 @@
                   <!-- your steps content here -->
                   <div id="personal-part" class="content" role="tabpanel" aria-labelledby="personal-part-trigger">
                     <div class="form-group">
-                      <label for="exampleInputFile">File input</label>
+                      <label for="photo_upload">File input</label>
                       <div class="input-group">
                         <div class="custom-file">
-                          <input type="file" name="photo" class="custom-file-input" id="exampleInputFile">
-                          <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                          <input type="file" name="photo" class="custom-file-input" id="photo_upload">
+                          <label class="custom-file-label" id="photo_label" for="photo_upload">Choose file</label>
                         </div>
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="emp_code">Employee Code</label>
+                      <label for="emp_code">Employee Code*</label>
                       <input type="text" name="emp_code" class="form-control" id="emp_code" placeholder="Employee Code" required>
                     </div>
                     <div class="form-group">
-                      <label for="emp_name">Full Name</label>
+                      <label for="emp_name">Full Name*</label>
                       <input type="text" class="form-control" id="emp_name" name="emp_name" placeholder="Full Name" required>
                     </div>
                     <div class="form-group">
@@ -61,7 +60,7 @@
                       </select>
                     </div>
                     <div class="form-group">
-                      <label for="emp_name">Role</label>
+                      <label for="emp_name">Role*</label>
                       <select class="select2-single form-control" name="role" id="role" required>
                           <option value="">Select role</option>
                           @foreach($roles as $role)
@@ -110,7 +109,7 @@
                       </select>
                     </div>
                     <div class="form-group">
-                      <label for="salary">Salary</label>
+                      <label for="salary">Salary*</label>
                       <input type="number" class="form-control" name="salary" id="salary" placeholder="₱0.00" required>
                     </div>
                     <button class="btn btn-primary" onclick="stepper.previous()">Previous</button>
@@ -137,6 +136,19 @@
 
 @section('title')
   Add Employee
+    @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+      @if(Session::has('alert-' . $msg))
+      <div class="alert alert-success alert-block">
+      {{-- <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p> --}}
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>{{ Session::get('alert-' . $msg) }}</strong>
+      </div>
+      @endif
+    @endforeach
+    
+      
+    
+
 @endsection
 
 @section('crumbs')
@@ -170,17 +182,29 @@
     
     document.getElementById("submit").addEventListener("click", function(){ 
       var required_fields = {
-        'Employee Code': $('#emp_code').val(),
-        'Employee Name': $('#emp_name').val(),
-        'Role': $('#role').val(),
-        'Salary': $('#salary').val()
+        'Employee Code': $('#emp_code'),
+        'Employee Name': $('#emp_name'),
+        'Role': $('#role'),
+        'Salary': $('#salary')
       }
 
       for (const [key, value] of Object.entries(required_fields)) {
-        if(!value){
-          alert('Please fillup ' + key)
+        value.removeClass('is-invalid')
+        if(value.val()) {
+          continue;
+        }
+
+        value.addClass('is-invalid')
+        console.log({value:value.val(), key:key});
+        if(key == 'Employee Code' || key == 'Employee Name'){
+          stepper.previous()
         }
       }
+    })
+
+    document.getElementById('photo_upload').addEventListener('change', (e) => {
+      const filename = e.target.files[0].name;
+      document.getElementById('photo_label').innerHTML = filename;
     })
     
   </script>

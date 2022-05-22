@@ -142,7 +142,7 @@
     <li class="nav-item dropdown user-menu">
       <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
         @if(\Auth::user()->employee->photo)
-          <img src="{{\Auth::user()->employee->photo}}" class="user-image img-circle elevation-2" alt="User Image">
+          <img src="{{ asset('img/'.\Auth::user()->employee->photo) }}" class="user-image img-circle elevation-2" alt="User Image">
         @else
           <img src="{{ URL::asset('assets/bower/img/not-set-160x160.jpg') }}" class="user-image img-circle elevation-2" alt="User Image">
         @endif
@@ -152,7 +152,7 @@
         <li class="user-header bg-primary">
           <!-- <img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image"> -->
           @if(\Auth::user()->employee->photo)
-            <img src="{{\Auth::user()->employee->photo}}" class="img-circle elevation-2" alt="User Image">
+            <img src="{{ asset('img/' . auth()->user()->employee->photo) }}" class="img-circle elevation-2" alt="User Image">
           @else
             <img src="{{ URL::asset('assets/bower/img/not-set-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
           @endif

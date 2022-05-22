@@ -19,10 +19,14 @@
         <div class="card">
           <div class="card-body">
             <div class="d-flex flex-column align-items-center text-center">
+              @if ($emp->employee->photo)
+              <img src="{{ asset('img/'.$emp->employee->photo) }}" alt="Admin" class="rounded-circle" width="150">
+              @else
               <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
+              @endif
               <div class="mt-3">
-                <h4>{{$emp->name}}</h4>
-                <p class="text-secondary mb-1">{{$emp->user->role->role->name}}</p>
+                <h4>{{$emp->employee->name}}</h4>
+                <p class="text-secondary mb-1">{{$emp->role->role->name}}</p>
                 <p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p>
                 <a href="#" class="btn btn-primary">Follow</a>
                 <a href="#" class="btn btn-outline-primary">Message</a>
@@ -67,7 +71,7 @@
                 <h6 class="mb-0">Full Name</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="text" id="name" value="{{$emp->name}}" class="no-border" disabled>
+                <input type="text" id="name" value="{{$emp->employee->name}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
@@ -76,7 +80,7 @@
                 <h6 class="mb-0">Email</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="text" id="email" value="{{$emp->user->email}}" class="no-border" disabled>
+                <input type="text" id="email" value="{{$emp->email}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
@@ -85,7 +89,7 @@
                 <h6 class="mb-0">Biometric ID</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="biometric_id" id="biometric_id" value="{{$emp->biometric_id}}" class="no-border" disabled>
+                <input type="biometric_id" id="biometric_id" value="{{$emp->employee->biometric_id}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
@@ -94,7 +98,7 @@
                 <h6 class="mb-0">Current Address</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="text" id="current_address" value="{{$emp->current_address}}" class="no-border" disabled>
+                <input type="text" id="current_address" value="{{$emp->employee->current_address}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
@@ -103,7 +107,7 @@
                 <h6 class="mb-0">Permanent Address</h6>
               </div>
               <div class="col-sm-9 text-secondary">
-                <input type="text" id="permanent_address" value="{{$emp->permanent_address}}" class="no-border" disabled>
+                <input type="text" id="permanent_address" value="{{$emp->employee->permanent_address}}" class="no-border" disabled>
               </div>
             </div>
             <hr>
