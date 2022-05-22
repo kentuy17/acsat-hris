@@ -1,3 +1,18 @@
+# exclude PackageManifest.php
+!/vendor/
+/vendor/*
+!/vendor/laravel/
+/vendor/laravel/*
+!/vendor/laravel/framework/
+/vendor/laravel/framework/*
+!/vendor/laravel/framework/src/
+/vendor/laravel/framework/src/*
+!/vendor/laravel/framework/src/Illuminate/
+/vendor/laravel/framework/src/Illuminate/*
+!/vendor/laravel/framework/src/Illuminate/Foundation/
+/vendor/laravel/framework/src/Illuminate/Foundation/*
+!/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php
+
 /node_modules
 /storage/*.key
 /vendor
